@@ -12,16 +12,32 @@
   },
   "devDependencies": {
     "@aws-cdk/assertions": "1.138.2",
+    "@aws-cdk/aws-apigatewayv2": "^1.138.2",
+    "@aws-cdk/aws-apigatewayv2-authorizers": "^1.138.2",
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.138.2",
+    "@aws-cdk/aws-cognito": "^1.138.2",
+    "@aws-cdk/aws-lambda": "^1.138.2",
+    "@aws-cdk/aws-lambda-nodejs": "^1.138.2",
+    "@types/aws-lambda": "^8.10.89",
     "@types/jest": "^26.0.10",
+    "@types/jsonwebtoken": "^8.5.6",
     "@types/node": "10.17.27",
+    "aws-cdk": "1.138.2",
+    "esbuild": "^0.14.11",
     "jest": "^26.4.2",
     "ts-jest": "^26.2.0",
-    "aws-cdk": "1.138.2",
     "ts-node": "^9.0.0",
-    "typescript": "~3.9.7"
+    "typescript": "~3.9.7",
+    "undefined": "^0.1.0"
   },
   "dependencies": {
     "@aws-cdk/core": "1.138.2",
+    "@types/jwk-to-pem": "^2.0.1",
+    "axios": "^0.24.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.5",
+    "jwks-rsa": "^2.0.5",
+    "jwt-decode": "^3.1.2",
     "source-map-support": "^0.5.16"
   }
 }
