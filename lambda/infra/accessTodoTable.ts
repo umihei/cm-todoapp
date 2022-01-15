@@ -15,7 +15,7 @@ export class AccessTodoTable {
                 todoId: { S: uuid.v4() },
                 title: { S: registerDBInfo.title },
                 description: { S: registerDBInfo.description },
-                timestamp: { N: '2022' },
+                lastUpdateDateTime: { S: (new Date()).toISOString() },
             },
         };
 
