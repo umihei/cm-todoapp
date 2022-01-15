@@ -23,6 +23,12 @@ export interface RegisterInfo {
     description: string,
 }
 
+export interface RegisterDBInfo {
+    userName: string,
+    title: string,
+    description: string,
+}
+
 export class RegisterDomain {
 
     public static async registerTodo(registerInfo: RegisterInfo) {
@@ -31,7 +37,13 @@ export class RegisterDomain {
         console.log('decoded token, ', decodedToken);
         const userName = decodedToken.username;
 
-        await AccessTodoTable.registerNewTodo();
+        const registerDBInfo: RegisterDBInfo = {
+            userName: userName,
+            title: registerInfo.title,
+            description: registerInfo.description,
+        }
+
+        await AccessTodoTable.registerNewTodo(registerDBInfo);
 
     };
 
