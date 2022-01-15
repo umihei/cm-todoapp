@@ -67,7 +67,7 @@ export class TodoappAuthStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_14_X,
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
-      entry: "lambda/domain/register.ts",
+      entry: "lambda/handler/registerHandler.ts",
       environment: {
         TODO_TABLE_NAME: todoTable.tableName,
         REGION: 'ap-northeast-1',
