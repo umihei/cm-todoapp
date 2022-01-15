@@ -6,6 +6,7 @@ import * as intg from '@aws-cdk/aws-apigatewayv2-integrations';
 import * as nodejs from '@aws-cdk/aws-lambda-nodejs';
 import * as authz from '@aws-cdk/aws-apigatewayv2-authorizers';
 import * as lambda from '@aws-cdk/aws-lambda';
+import * as dynamodb from '@aws-cdk/aws-dynamodb';
 
 export interface TodoappAuthStackProps extends cdk.StackProps {
   callbackUrls: string[];
@@ -56,13 +57,24 @@ export class TodoappAuthStack extends cdk.Stack {
       },
     });
 
+    const todoTable = new dynamodb.Table(this, 'todoTable', {
+      partitionKey: { name: 'userName', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'todoId', type: dynamodb.AttributeType.STRING },
+    });
+
     const registerFn = new nodejs.NodejsFunction(this, 'register', {
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_14_X,
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
       entry: "lambda/domain/register.ts",
+      environment: {
+        TODO_TABLE_NAME: todoTable.tableName,
+        REGION: 'ap-northeast-1',
+      },
     });
+
+    todoTable.grantReadWriteData(registerFn);
 
     const authorizer = new authz.HttpUserPoolAuthorizer(
       'user-pool-authorizer',
@@ -87,6 +99,8 @@ export class TodoappAuthStack extends cdk.Stack {
         'protected-fn-integration',
         registerFn),
     });
+
+
 
     new cdk.CfnOutput(this, 'OutputApiUrl', { value: httpApi.url! });
     new cdk.CfnOutput(this, 'userPoolId', { value: userPool.userPoolId });

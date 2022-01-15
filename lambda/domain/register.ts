@@ -1,5 +1,6 @@
 import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2 } from 'aws-lambda';
 import jwt_decode from 'jwt-decode';
+import { AccessTodoTable } from '../infra/accessTodoTable';
 
 interface Response {
     status: string
@@ -21,6 +22,14 @@ interface DecodedToken {
     username: string,
 }
 
+export class RegisterDomain {
+
+    public static async registerTodo() {
+
+    }
+
+}
+
 export const handler: APIGatewayProxyHandlerV2 = async (event: APIGatewayProxyEventV2) => {
     console.log('incoming event ', event);
 
@@ -30,6 +39,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (event: APIGatewayProxyEv
     console.log('jwt decoded ', decoded);
 
     const username = decoded.username;
+
+    await AccessTodoTable.registerNewTodo();
 
     return {
         statusCode: 200,
