@@ -4,7 +4,7 @@ const ddbClient = new DynamoDBClient({ region: process.env.REGION });
 
 export class AccessTodoTable {
 
-    public static async registerNewTodo(): Promise<PutItemCommandOutput | void> {
+    public static async registerNewTodo(): Promise<PutItemCommandOutput> {
 
         const params: PutItemCommandInput = {
             TableName: process.env.TODO_TABLE_NAME,
@@ -13,13 +13,14 @@ export class AccessTodoTable {
                 todoId: { S: 'hogehoge' },
                 title: { S: 'あれこれ' },
                 description: { S: 'あれやってこれやって' },
-                timestamp: { N: 2022 },
+                timestamp: { N: '2022' },
             },
         };
 
         return await ddbClient.send(new PutItemCommand(params))
             .catch(err => {
                 console.error('dynamodb put ', err)
+                throw err;
             });
     }
 }
