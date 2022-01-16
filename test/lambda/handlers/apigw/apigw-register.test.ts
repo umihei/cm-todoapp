@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2 } from 'aws-lambda';
-import { handler } from '../../../lambda/handler/registerHandler';
+import { handler } from '../../../../lambda/handler/registerHandler';
 
 describe('register Input/Output', (): void => {
 
@@ -12,7 +12,7 @@ describe('register Input/Output', (): void => {
             headers: {
                 authorization: 'token',
             },
-        };
+        } as any;
 
         const response = await handler(inputEvent);
 
