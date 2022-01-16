@@ -61,6 +61,7 @@ describe('register Input/Output', (): void => {
         expect(registerNewTodoMock.mock.calls.length).toBe(1);
 
         // registerNewTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
+        // 兼オブジェクト変換テスト
         expect(registerNewTodoMock.mock.calls[0][0]).toEqual(expectedRegisterDBInfo);
 
         // レスポンスが期待通りであることをテスト
