@@ -1,8 +1,11 @@
 import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2 } from 'aws-lambda';
 import { handler } from '../../../../lambda/handler/registerHandler';
+import { AccessTodoTable } from '../../../../lambda/infra/accessTodoTable';
+import { RegisterDBInfo } from '../../../../lambda/domain/register';
 import jwt_decode from 'jwt-decode';
 
-jest.mock('jwt-decode')
+jest.mock('jwt-decode');
+jest.mock('../../../../lambda/infra/accessTodoTable');
 
 describe('register Input/Output', (): void => {
 
@@ -17,7 +20,8 @@ describe('register Input/Output', (): void => {
             },
         } as any;
 
-        const decodedTokenMock = (jwt_decode as jest.Mock).mockResolvedValue({
+        // Tokenをデコードする処理をMock化
+        const decodedTokenMock = (jwt_decode as jest.Mock).mockReturnValue({
             sub: '29f677eb-3520-4ce9-95bb-141df9d248f2',
             iss: 'https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_gYM22AA61',
             version: 2,
@@ -33,7 +37,16 @@ describe('register Input/Output', (): void => {
             username: 'tarako'
         });
 
+        // DBにPutする処理をMock化
+        const registerNewTodoMock = (AccessTodoTable.registerNewTodo as jest.Mock).mockResolvedValue(null);
+
         const response = await handler(inputEvent);
+
+        const expectedRegisterDBInfo: RegisterDBInfo = {
+            userName: 'tarako',
+            title: 'あれこれ',
+            description: 'あれしてこれして',
+        }
 
         const expected = {
             statusCode: 200,
@@ -42,6 +55,13 @@ describe('register Input/Output', (): void => {
             }),
         };
 
+        // DynamodbへのPutが１回だけであることをテスト
+        expect(registerNewTodoMock.mock.calls.length).toBe(1);
+
+        // registerNewTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
+        expect(registerNewTodoMock.mock.calls[0][0]).toEqual(expectedRegisterDBInfo);
+
+        // レスポンスが期待通りであることをテスト
         expect(response).toEqual(expected);
 
     })
