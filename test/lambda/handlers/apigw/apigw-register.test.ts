@@ -42,12 +42,14 @@ describe('register Input/Output', (): void => {
 
         const response = await handler(inputEvent);
 
+        // モック化した関数へ渡すパラメタの期待値
         const expectedRegisterDBInfo: RegisterDBInfo = {
             userName: 'tarako',
             title: 'あれこれ',
             description: 'あれしてこれして',
         }
 
+        // ハンドラが返す値の期待値
         const expected = {
             statusCode: 200,
             body: JSON.stringify({
