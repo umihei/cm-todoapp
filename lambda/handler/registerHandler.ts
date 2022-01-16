@@ -1,11 +1,11 @@
-import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2 } from 'aws-lambda';
+import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { RegisterDomain, RegisterInfo } from '../domain/register';
 
 interface Response {
     status: string
 }
 
-export const handler: APIGatewayProxyHandlerV2 = async (event: APIGatewayProxyEventV2) => {
+export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
     console.log('incoming event ', event);
 
     const registerInfo: RegisterInfo = {
