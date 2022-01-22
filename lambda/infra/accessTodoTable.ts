@@ -2,7 +2,7 @@ import { DynamoDBClient, PutItemCommand, PutItemCommandInput, PutItemCommandOutp
 import { RegisterDBInfo } from '../domain/register';
 import * as uuid from 'uuid';
 
-const ddbClient = new DynamoDBClient({ region: process.env.REGION });
+export const ddbClient = new DynamoDBClient({ region: process.env.REGION });
 
 export class AccessTodoTable {
 
@@ -19,10 +19,15 @@ export class AccessTodoTable {
             },
         };
 
-        return await ddbClient.send(new PutItemCommand(params))
-            .catch(err => {
-                console.error('dynamodb put ', err)
-                throw err;
-            });
+        try {
+            return await ddbClient.send(this.executePutItemCommand(params));
+        } catch (err) {
+            console.error('dynamodb put ', err);
+            throw (err);
+        }
+    }
+
+    public static executePutItemCommand(params: PutItemCommandInput): any {
+        return new PutItemCommand(params)
     }
 }
