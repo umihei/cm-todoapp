@@ -1,24 +1,7 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, Context } from 'aws-lambda';
-import { RegisterDomain, RegisterInfo } from '../domain/register';
+import { RegisterDomain, RegisterDBInfo } from '../domain/register';
 import Ajv from 'ajv';
-import jwt_decode from 'jwt-decode';
 import * as winston from 'winston';
-
-interface DecodedToken {
-    sub: string,
-    iss: string,
-    version: number,
-    client_id: string,
-    origin_jti: string,
-    event_id: string,
-    token_use: string,
-    scope: string,
-    auth_time: number,
-    exp: number,
-    iat: number,
-    jti: string,
-    username: string,
-}
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
@@ -43,13 +26,6 @@ interface Response {
 }
 
 export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, context: Context): Promise<APIGatewayProxyResultV2> => {
-
-    // const Logger = log4js.getLogger()
-    // Logger.level = 'all'
-
-    // Logger.info('test', 'test', 'info')
-    // Logger.error('some error', event)
-    // Logger.error(event)
 
     logger.defaultMeta = { requestId: context.awsRequestId };
     logger.info(event);
@@ -140,10 +116,6 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
         };
     }
 
-    const decodedToken: DecodedToken = jwt_decode(event.headers.authorization);
-    console.log('decoded token, ', decodedToken);
-    const userName = decodedToken.username;
-
     // パスパラメタのusernameとjwtトークンに含まれるusernameが一致しなかったら400を返す
     if (event.pathParameters.username !== (event.requestContext.authorizer.jwt.claims.username)) {
         console.error('authentication info is invalid.')
@@ -156,7 +128,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
     }
 
     // TODOの登録に必要な情報を揃える
-    const registerInfo: RegisterInfo = {
+    const registerInfo: RegisterDBInfo = {
         username: (event.pathParameters!).username as string,
         title: JSON.parse(event.body!).title,
         description: JSON.parse(event.body!).description,
