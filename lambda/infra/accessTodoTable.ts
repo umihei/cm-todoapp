@@ -11,7 +11,7 @@ export class AccessTodoTable {
         const params: PutItemCommandInput = {
             TableName: process.env.TODO_TABLE_NAME,
             Item: {
-                userName: { S: registerDBInfo.userName },
+                userName: { S: registerDBInfo.username },
                 todoId: { S: uuid.v4() },
                 title: { S: registerDBInfo.title },
                 description: { S: registerDBInfo.description },

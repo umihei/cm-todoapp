@@ -18,13 +18,13 @@ interface DecodedToken {
 }
 
 export interface RegisterInfo {
-    token: string,
+    username: string,
     title: string,
     description: string,
 }
 
 export interface RegisterDBInfo {
-    userName: string,
+    username: string,
     title: string,
     description: string,
 }
@@ -33,17 +33,23 @@ export class RegisterDomain {
 
     public static async registerTodo(registerInfo: RegisterInfo) {
 
-        const decodedToken: DecodedToken = jwt_decode(registerInfo.token);
-        console.log('decoded token, ', decodedToken);
-        const userName = decodedToken.username;
+        // const decodedToken: DecodedToken = jwt_decode(registerInfo.token);
+        // console.log('decoded token, ', decodedToken);
+        // const userName = decodedToken.username;
 
         const registerDBInfo: RegisterDBInfo = {
-            userName: userName,
+            username: registerInfo.username,
             title: registerInfo.title,
             description: registerInfo.description,
         }
 
-        await AccessTodoTable.registerNewTodo(registerDBInfo);
+        try {
+            await AccessTodoTable.registerNewTodo(registerDBInfo);
+        }
+        catch (err) {
+            console.error(err);
+            throw (err);
+        }
 
     };
 

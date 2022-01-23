@@ -94,7 +94,7 @@ export class TodoappAuthStack extends cdk.Stack {
     });
     httpApi.addRoutes({
       methods: [HttpMethod.GET, HttpMethod.POST],
-      path: '/register',
+      path: '/users/{username}/todos',
       integration: new intg.HttpLambdaIntegration(
         'protected-fn-integration',
         registerFn),

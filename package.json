@@ -23,6 +23,7 @@
     "@types/jest": "^26.0.10",
     "@types/jsonwebtoken": "^8.5.6",
     "@types/node": "10.17.27",
+    "@types/winston": "^2.4.4",
     "aws-cdk": "1.138.2",
     "esbuild": "^0.14.11",
     "jest": "^26.4.2",
@@ -35,6 +36,7 @@
     "@aws-cdk/core": "1.138.2",
     "@aws-sdk/client-dynamodb": "^3.47.0",
     "@types/jwk-to-pem": "^2.0.1",
+    "@types/log4js": "^2.3.5",
     "@types/uuid": "^8.3.4",
     "ajv": "^8.9.0",
     "axios": "^0.24.0",
@@ -42,6 +44,8 @@
     "jwk-to-pem": "^2.0.5",
     "jwks-rsa": "^2.0.5",
     "jwt-decode": "^3.1.2",
-    "source-map-support": "^0.5.16"
+    "log4js": "^6.4.0",
+    "source-map-support": "^0.5.16",
+    "winston": "^3.4.0"
   }
 }
