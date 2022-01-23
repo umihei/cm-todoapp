@@ -20,7 +20,7 @@ describe('todo table service call', (): void => {
 
         // DBへの登録処理を実行する関数へ渡すパラメタ
         const InputParameter: RegisterDBInfo = {
-            userName: 'tarako',
+            username: 'tarako',
             title: 'あのこと',
             description: 'あれやって，これやって'
         };
@@ -29,7 +29,7 @@ describe('todo table service call', (): void => {
         const putItemCommandInputParams = {
             TableName: 'local-todo',
             Item: {
-                userName: { S: InputParameter.userName },
+                userName: { S: InputParameter.username },
                 todoId: { S: expect.any(String) },
                 title: { S: InputParameter.title },
                 description: { S: InputParameter.description },
