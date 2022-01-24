@@ -1,4 +1,6 @@
 import { AccessTodoTable } from '../infra/accessTodoTable';
+import { logger } from '../logger';
+logger.defaultMeta = { requestId: process.env.AWS_REQUESTID };
 
 export interface RegisterDBInfo {
     username: string,
@@ -14,7 +16,7 @@ export class RegisterDomain {
             await AccessTodoTable.registerNewTodo(registerDBInfo);
         }
         catch (err) {
-            console.error(err);
+            logger.error(err);
             throw (err);
         }
 

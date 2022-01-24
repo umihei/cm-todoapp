@@ -1,22 +1,23 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import { RegisterDomain, RegisterDBInfo } from '../domain/register';
 import Ajv from 'ajv';
-import * as winston from 'winston';
+import { logger } from '../logger';
+// import * as winston from 'winston';
 
-const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'info',
-    format: winston.format.combine(
-        winston.format.timestamp({
-            format: "YYYY-MM-DD HH:mm:ss"
-        }),
-        winston.format.errors({ stack: true }),
-        winston.format.splat(),
-        winston.format.json()
-    ),
-    transports: [
-        new winston.transports.Console(),
-    ],
-});
+// const logger = winston.createLogger({
+//     level: process.env.LOG_LEVEL || 'info',
+//     format: winston.format.combine(
+//         winston.format.timestamp({
+//             format: "YYYY-MM-DD HH:mm:ss"
+//         }),
+//         winston.format.errors({ stack: true }),
+//         winston.format.splat(),
+//         winston.format.json()
+//     ),
+//     transports: [
+//         new winston.transports.Console(),
+//     ],
+// });
 
 // validator lib
 const ajv = new Ajv();
@@ -28,7 +29,7 @@ interface Response {
 export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, context: Context): Promise<APIGatewayProxyResultV2> => {
 
     logger.defaultMeta = { requestId: context.awsRequestId };
-    logger.info(event);
+    logger.info({ message: 'incoming event', data: event });
 
     // // bodyがあることを確認
     // if (!event.body) {

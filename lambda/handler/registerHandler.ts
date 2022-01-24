@@ -1,22 +1,7 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import { RegisterDomain, RegisterDBInfo } from '../domain/register';
 import Ajv from 'ajv';
-import * as winston from 'winston';
-
-const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'info',
-    format: winston.format.combine(
-        winston.format.timestamp({
-            format: "YYYY-MM-DD HH:mm:ss"
-        }),
-        winston.format.errors({ stack: true }),
-        winston.format.splat(),
-        winston.format.json()
-    ),
-    transports: [
-        new winston.transports.Console(),
-    ],
-});
+import { logger } from '../logger';
 
 // validator lib
 const ajv = new Ajv();
@@ -27,6 +12,7 @@ interface Response {
 
 export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, context: Context): Promise<APIGatewayProxyResultV2> => {
 
+    process.env.AWS_REQUESTID = context.awsRequestId;
     logger.defaultMeta = { requestId: context.awsRequestId };
     logger.info(event);
 
@@ -68,13 +54,13 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
             } as Response),
         };
     }
-    logger.info(body);
+    logger.info({ message: 'body', data: body });
     const validate = ajv.compile(bodySchema);
     const valid = validate(body);
-    logger.info('validation result: ' + valid);
+    logger.info({ message: 'validation result: ', isValid: valid });
 
     if (!valid) {
-        console.error('validation error, ', validate.errors);
+        logger.error({ message: 'validation error, ', validateError: validate.errors });
         return {
             statusCode: 400,
             body: JSON.stringify({
@@ -85,7 +71,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // もしauthorizationヘッダがなかったら403を返す（ここに到達した時点では確実にあるはずだが一応）
     if (!event.headers.authorization) {
-        console.error('authorization header is not found.')
+        logger.error('authorization header is not found.')
         return {
             statusCode: 401,
             body: JSON.stringify({
@@ -96,7 +82,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // もしパスパラメタがなかったら400を返す
     if (!event.pathParameters) {
-        console.error('path parameter is not found');
+        logger.error('path parameter is not found');
         return {
             statusCode: 400,
             body: JSON.stringify({
@@ -107,7 +93,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // パスパラメタのusernameがなかったら400を返す
     if (!event.pathParameters.username) {
-        console.error('path parameter username is not found');
+        logger.error('path parameter username is not found');
         return {
             statusCode: 400,
             body: JSON.stringify({
@@ -118,7 +104,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // パスパラメタのusernameとjwtトークンに含まれるusernameが一致しなかったら400を返す
     if (event.pathParameters.username !== (event.requestContext.authorizer.jwt.claims.username)) {
-        console.error('authentication info is invalid.')
+        logger.error('authentication info is invalid.')
         return {
             statusCode: 400,
             body: JSON.stringify({
@@ -134,12 +120,12 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
         description: JSON.parse(event.body!).description,
     }
 
-    console.log('registerInfo, ', registerInfo);
+    logger.info({ message: 'registerInfo', data: registerInfo });
     try {
         await RegisterDomain.registerTodo(registerInfo);
     }
     catch (err) {
-        console.error(err);
+        logger.error(err);
         return {
             statusCode: 500,
             body: JSON.stringify({

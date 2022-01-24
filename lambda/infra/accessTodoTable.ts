@@ -1,6 +1,8 @@
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput, PutItemCommandOutput } from '@aws-sdk/client-dynamodb';
 import { RegisterDBInfo } from '../domain/register';
 import * as uuid from 'uuid';
+import { logger } from '../logger';
+logger.defaultMeta = { requestId: process.env.AWS_REQUESTID };
 
 export const ddbClient = new DynamoDBClient({ region: process.env.REGION });
 
@@ -22,7 +24,7 @@ export class AccessTodoTable {
         try {
             return await ddbClient.send(this.executePutItemCommand(params));
         } catch (err) {
-            console.error('dynamodb put ', err);
+            logger.error('dynamodb put ', err);
             throw (err);
         }
     }
