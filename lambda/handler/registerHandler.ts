@@ -14,7 +14,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     process.env.AWS_REQUESTID = context.awsRequestId;
     logger.defaultMeta = { requestId: context.awsRequestId };
-    logger.info(event);
+    logger.info({ message: 'incoming event', data: event });
 
     // bodyがあることを確認
     if (!event.body) {
