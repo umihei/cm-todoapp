@@ -8,18 +8,18 @@ import * as authz from '@aws-cdk/aws-apigatewayv2-authorizers';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 
-export interface TodoappAuthStackProps extends cdk.StackProps {
+export interface TodoappStackProps extends cdk.StackProps {
   callbackUrls: string[];
   logoutUrls: string[];
   frontendUrls: string[];
   domainPrefix: string;
 }
 
-export class TodoappAuthStack extends cdk.Stack {
+export class TodoappStack extends cdk.Stack {
   constructor(
     scope: cdk.Construct,
     id: string,
-    props: TodoappAuthStackProps
+    props: TodoappStackProps
   ) {
     super(scope, id, props);
 
@@ -76,6 +76,21 @@ export class TodoappAuthStack extends cdk.Stack {
 
     todoTable.grantReadWriteData(registerFn);
 
+    const queryFn = new nodejs.NodejsFunction(this, 'query', {
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_14_X,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      entry: "lambda/handler/queryHandler.ts",
+      environment: {
+        TODO_TABLE_NAME: todoTable.tableName,
+        REGION: 'ap-northeast-1',
+      },
+    });
+
+    todoTable.grantReadWriteData(queryFn);
+
+
     const authorizer = new authz.HttpUserPoolAuthorizer(
       'user-pool-authorizer',
       userPool,
@@ -92,12 +107,23 @@ export class TodoappAuthStack extends cdk.Stack {
         allowHeaders: ['Authorization', 'Content-Type'],
       },
     });
+
+    // path,methodとLambda関数を関連付ける
+
     httpApi.addRoutes({
-      methods: [HttpMethod.GET, HttpMethod.POST],
+      methods: [HttpMethod.POST],
       path: '/users/{username}/todos',
       integration: new intg.HttpLambdaIntegration(
         'protected-fn-integration',
         registerFn),
+    });
+
+    httpApi.addRoutes({
+      methods: [HttpMethod.GET],
+      path: '/users/{username}/todos',
+      integration: new intg.HttpLambdaIntegration(
+        'protected-fn-integration',
+        queryFn),
     });
 
 
