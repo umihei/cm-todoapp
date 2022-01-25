@@ -5,9 +5,9 @@ import { QueryDBInfo } from '../../../../lambda/domain/query';
 
 jest.mock('../../../../lambda/infra/accessTodoTable');
 
-describe('register Input/Output', (): void => {
+describe('query Input/Output', (): void => {
 
-    test('register domain', async () => {
+    test('query domain', async () => {
         const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
             requestContext: {
                 authorizer: {
