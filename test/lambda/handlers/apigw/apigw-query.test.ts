@@ -113,7 +113,53 @@ describe('query Input/Output', (): void => {
 
     })
 
-    test('query domain path param is not exist', async () => {
+    test('query domain path param username does not exist', async () => {
+        const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
+            requestContext: {
+                authorizer: {
+                    jwt: {
+                        claims: {
+                            username: 'tarako'
+                        }
+                    }
+                }
+            },
+            pathParameters: {
+            },
+            headers: {
+                authorization: "test-auth"
+            }
+        } as any;
+
+        const inputContext: Context = {
+            awsRequestId: 'test-id'
+        } as any;
+
+        const pseudoReturnVal = [{
+            todoId: 'testid',
+            title: 'あのこと',
+            description: 'あれやこれや'
+        }]
+
+        // DBにPutする処理をMock化
+        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+
+        const response = await handler(inputEvent, inputContext);
+
+        // ハンドラが返す値の期待値
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Parameter is invalid.',
+            }),
+        };
+
+        // レスポンスが期待通りであることをテスト
+        expect(response).toEqual(expected);
+
+    })
+
+    test('query domain path param does not exist', async () => {
         const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
             requestContext: {
                 authorizer: {
@@ -157,7 +203,7 @@ describe('query Input/Output', (): void => {
 
     })
 
-    test('query domain path param username is not exist', async () => {
+    test('query domain fail dynamodb api', async () => {
         const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
             requestContext: {
                 authorizer: {
@@ -169,6 +215,7 @@ describe('query Input/Output', (): void => {
                 }
             },
             pathParameters: {
+                username: 'tarako'
             },
             headers: {
                 authorization: "test-auth"
@@ -186,17 +233,17 @@ describe('query Input/Output', (): void => {
         }]
 
         // DBにPutする処理をMock化
-        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockRejectedValue(null);
 
         const response = await handler(inputEvent, inputContext);
 
         // ハンドラが返す値の期待値
         const expected = {
-            statusCode: 400,
+            statusCode: 500,
             body: JSON.stringify({
-                message: 'Parameter is invalid.',
-            }),
-        };
+                message: 'Internal Server Error.',
+            })
+        }
 
         // レスポンスが期待通りであることをテスト
         expect(response).toEqual(expected);
