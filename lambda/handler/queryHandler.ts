@@ -12,17 +12,6 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
     logger.defaultMeta = { requestId: context.awsRequestId };
     logger.info({ message: 'incoming event', data: event });
 
-    // もしauthorizationヘッダがなかったら403を返す（ここに到達した時点では確実にあるはずだが一応）
-    if (!event.headers.authorization) {
-        logger.error('authorization header is not found.')
-        return {
-            statusCode: 401,
-            body: JSON.stringify({
-                message: 'Unauthorized.',
-            } as Response),
-        };
-    }
-
     // もしパスパラメタがなかったら400を返す
     if (!event.pathParameters) {
         logger.error('path parameter is not found');
