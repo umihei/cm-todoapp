@@ -1,10 +1,6 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import { QueryDomain, QueryDBInfo, WithoutUserNameTodo } from '../domain/query';
-import Ajv from 'ajv';
 import { logger } from '../logger';
-
-// validator lib
-const ajv = new Ajv();
 
 interface Response {
     message: string
