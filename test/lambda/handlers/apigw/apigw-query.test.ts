@@ -7,7 +7,7 @@ jest.mock('../../../../lambda/infra/accessTodoTable');
 
 describe('query Input/Output', (): void => {
 
-    test('query domain', async () => {
+    test('query domain ok pattern', async () => {
         const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
             requestContext: {
                 authorizer: {
@@ -66,4 +66,140 @@ describe('query Input/Output', (): void => {
 
     })
 
+    test('query domain path param is not consistent with jwt username', async () => {
+        const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
+            requestContext: {
+                authorizer: {
+                    jwt: {
+                        claims: {
+                            username: 'tarako'
+                        }
+                    }
+                }
+            },
+            pathParameters: {
+                username: 'taiko'
+            },
+            headers: {
+                authorization: "test-auth"
+            }
+        } as any;
+
+        const inputContext: Context = {
+            awsRequestId: 'test-id'
+        } as any;
+
+        const pseudoReturnVal = [{
+            todoId: 'testid',
+            title: 'あのこと',
+            description: 'あれやこれや'
+        }]
+
+        // DBにPutする処理をMock化
+        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+
+        const response = await handler(inputEvent, inputContext);
+
+        // ハンドラが返す値の期待値
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Parameter is invalid.',
+            }),
+        };
+
+        // レスポンスが期待通りであることをテスト
+        expect(response).toEqual(expected);
+
+    })
+
+    test('query domain path param is not exist', async () => {
+        const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
+            requestContext: {
+                authorizer: {
+                    jwt: {
+                        claims: {
+                            username: 'tarako'
+                        }
+                    }
+                }
+            },
+            headers: {
+                authorization: "test-auth"
+            }
+        } as any;
+
+        const inputContext: Context = {
+            awsRequestId: 'test-id'
+        } as any;
+
+        const pseudoReturnVal = [{
+            todoId: 'testid',
+            title: 'あのこと',
+            description: 'あれやこれや'
+        }]
+
+        // DBにPutする処理をMock化
+        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+
+        const response = await handler(inputEvent, inputContext);
+
+        // ハンドラが返す値の期待値
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Parameter is invalid.',
+            }),
+        };
+
+        // レスポンスが期待通りであることをテスト
+        expect(response).toEqual(expected);
+
+    })
+
+    test('query domain path param username is not exist', async () => {
+        const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
+            requestContext: {
+                authorizer: {
+                    jwt: {
+                        claims: {
+                            username: 'tarako'
+                        }
+                    }
+                }
+            },
+            pathParameters: {
+            },
+            headers: {
+                authorization: "test-auth"
+            }
+        } as any;
+
+        const inputContext: Context = {
+            awsRequestId: 'test-id'
+        } as any;
+
+        const pseudoReturnVal = [{
+            todoId: 'testid',
+            title: 'あのこと',
+            description: 'あれやこれや'
+        }]
+
+        // DBにPutする処理をMock化
+        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+
+        const response = await handler(inputEvent, inputContext);
+
+        // ハンドラが返す値の期待値
+        const expected = {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Parameter is invalid.',
+            }),
+        };
+
+        // レスポンスが期待通りであることをテスト
+        expect(response).toEqual(expected);
+
+    })
 });
