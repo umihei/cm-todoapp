@@ -33,7 +33,8 @@ export class QueryDomain {
                 return {
                     todoId: res.todoId,
                     title: res.title,
-                    description: res.description
+                    description: res.description,
+                    lastUpdateDateTime: res.lastUpdateDateTime
                 }
             })
             return withoutUserName;
