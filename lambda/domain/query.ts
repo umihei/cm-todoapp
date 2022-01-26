@@ -1,4 +1,5 @@
 import { AccessTodoTable } from '../infra/accessTodoTable';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { logger } from '../logger';
 logger.defaultMeta = { requestId: process.env.AWS_REQUESTID };
 
@@ -23,8 +24,12 @@ export class QueryDomain {
 
         try {
             const response = await AccessTodoTable.queryTodo(queryDBInfo);
-            logger.info({ message: 'query response', data: response });
-            const withoutUserName: WithoutUserNameTodo = response.map((res: Todo) => {
+            logger.info({ message: 'response', data: response })
+            const { Items } = response;
+            logger.info({ message: 'Items', data: Items })
+            const todoList = Items!.map((i) => unmarshall(i))
+            logger.info({ message: 'query response', data: todoList });
+            const withoutUserName = todoList.map((res) => {
                 return {
                     todoId: res.todoId,
                     title: res.title,

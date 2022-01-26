@@ -31,7 +31,7 @@ export class AccessTodoTable {
         }
     }
 
-    public static async queryTodo(queryDBinfo: QueryDBInfo): Promise<any> {
+    public static async queryTodo(queryDBinfo: QueryDBInfo): Promise<QueryCommandOutput> {
 
         const params: QueryCommandInput = {
             TableName: process.env.TODO_TABLE_NAME,
@@ -42,10 +42,7 @@ export class AccessTodoTable {
         }
 
         try {
-            const res: QueryCommandOutput = await ddbClient.send(this.executeQueryCommand(params));
-            const { Items } = res;
-            return Items!.map((i) => unmarshall(i))
-
+            return ddbClient.send(this.executeQueryCommand(params));
         }
         catch (err) {
             logger.error({ message: 'dynamodb query', error: err });
