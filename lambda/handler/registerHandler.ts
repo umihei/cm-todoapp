@@ -42,18 +42,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
     }
 
     // bodyのスキーマが正しいことを確認
-    let body;
-    try {
-        body = JSON.parse(event.body!)
-    } catch (err) {
-        logger.error('JSON parse error');
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                message: 'Parameter is invalid.',
-            } as Response),
-        };
-    }
+    const body = JSON.parse(event.body!)
     logger.info({ message: 'body', data: body });
     const validate = ajv.compile(bodySchema);
     const valid = validate(body);
@@ -65,17 +54,6 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
             statusCode: 400,
             body: JSON.stringify({
                 message: 'Parameter is invalid.',
-            } as Response),
-        };
-    }
-
-    // もしauthorizationヘッダがなかったら403を返す（ここに到達した時点では確実にあるはずだが一応）
-    if (!event.headers.authorization) {
-        logger.error('authorization header is not found.')
-        return {
-            statusCode: 401,
-            body: JSON.stringify({
-                message: 'Unauthorized.',
             } as Response),
         };
     }
