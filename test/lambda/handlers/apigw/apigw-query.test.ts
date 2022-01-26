@@ -30,11 +30,13 @@ describe('query Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        const pseudoReturnVal = [{
-            todoId: 'testid',
-            title: 'あのこと',
-            description: 'あれやこれや'
-        }]
+        const pseudoReturnVal = {
+            Items: [{
+                todoId: { S: 'testid' },
+                title: { S: 'あのこと' },
+                description: { S: 'あれやこれや' }
+            }]
+        }
 
         // DBにPutする処理をMock化
         const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
@@ -50,7 +52,11 @@ describe('query Input/Output', (): void => {
         const expected = {
             statusCode: 200,
             body: JSON.stringify(
-                pseudoReturnVal
+                [{
+                    todoId: 'testid',
+                    title: 'あのこと',
+                    description: 'あれやこれや'
+                }]
             ),
         };
 
