@@ -3,6 +3,7 @@ process.env.REGION = 'local';
 process.env.TODO_TABLE_NAME = 'local-todo';
 
 import { RegisterDBInfo } from '../../../../lambda/domain/register';
+import { QueryDBInfo } from '../../../../lambda/domain/query';
 import { AccessTodoTable, ddbClient } from '../../../../lambda/infra/accessTodoTable';
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput, PutItemCommandOutput } from '@aws-sdk/client-dynamodb';
 
@@ -45,6 +46,48 @@ describe('todo table service call', (): void => {
 
         // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
         expect(AccessTodoTable.executePutItemCommand).toHaveBeenCalledWith(putItemCommandInputParams);
+
+        // モック化した関数が１回だけコールされたことをテスト
+        expect(ddbClient.send).toHaveBeenCalledTimes(1);
+
+    });
+
+    test('query', async () => {
+
+        // APIを実行する関数をモック化
+        ddbClient.send = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue({
+                Items: [{
+                    test: 'hoge'
+                }]
+            })
+        });
+
+        // PutItemCommandを実行する関数をモック化
+        AccessTodoTable.executeQueryCommand = jest.fn().mockReturnValue(null);
+
+        // DBへの登録処理を実行する関数へ渡すパラメタ
+        const inputParameter: QueryDBInfo = {
+            username: 'tarako'
+        };
+
+        // PutItemCommandへ渡すパラメタの期待値
+        const queryCommandInputParams = {
+            TableName: 'local-todo',
+            KeyConditionExpression: "userName = :s",
+            ExpressionAttributeValues: {
+                ":s": { S: inputParameter.username },
+            },
+        };
+
+        // DBへの登録処理を実行
+        await AccessTodoTable.queryTodo(inputParameter)
+
+        // モック化した関数が１回だけコールされたことをテスト
+        expect(AccessTodoTable.executeQueryCommand).toHaveBeenCalledTimes(1);
+
+        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        expect(AccessTodoTable.executeQueryCommand).toHaveBeenCalledWith(queryCommandInputParams);
 
         // モック化した関数が１回だけコールされたことをテスト
         expect(ddbClient.send).toHaveBeenCalledTimes(1);
