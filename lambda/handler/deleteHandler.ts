@@ -64,9 +64,8 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     logger.info({ message: 'deleteDBInfo', data: deleteDBInfo });
 
-    let response;
     try {
-        response = await DeleteDomain.deleteTodo(deleteDBInfo);
+        await DeleteDomain.deleteTodo(deleteDBInfo);
     }
     catch (err) {
         logger.error(err);
@@ -80,8 +79,8 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     return {
         statusCode: 200,
-        body: JSON.stringify(
-            response
-        ),
+        body: JSON.stringify({
+            message: 'OK',
+        } as Response),
     };
 };
