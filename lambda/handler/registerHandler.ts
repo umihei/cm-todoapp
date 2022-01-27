@@ -93,9 +93,9 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // TODOの登録に必要な情報を揃える
     const registerInfo: RegisterDBInfo = {
-        username: (event.pathParameters!).username as string,
-        title: JSON.parse(event.body!).title,
-        description: JSON.parse(event.body!).description,
+        username: event.pathParameters.username,
+        title: JSON.parse(event.body).title,
+        description: JSON.parse(event.body).description,
     }
 
     logger.info({ message: 'registerInfo', data: registerInfo });

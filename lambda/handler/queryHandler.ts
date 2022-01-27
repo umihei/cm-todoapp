@@ -47,7 +47,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // TODOの検索に必要な情報を揃える
     const queryDBInfo: QueryDBInfo = {
-        username: (event.pathParameters!).username as string,
+        username: event.pathParameters.username,
     }
 
     logger.info({ message: 'queryDBInfo', data: queryDBInfo });
