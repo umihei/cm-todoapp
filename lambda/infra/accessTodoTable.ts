@@ -1,10 +1,11 @@
-import { DynamoDBClient, QueryCommand, QueryCommandInput, QueryCommandOutput, GetItemCommand, GetItemCommandInput, GetItemCommandOutput, PutItemCommand, PutItemCommandInput, PutItemCommandOutput, UpdateItemCommand, UpdateItemCommandInput, UpdateItemCommandOutput } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand, QueryCommandInput, QueryCommandOutput, GetItemCommand, GetItemCommandInput, GetItemCommandOutput, PutItemCommand, PutItemCommandInput, PutItemCommandOutput, UpdateItemCommand, UpdateItemCommandInput, UpdateItemCommandOutput, DeleteItemCommand, DeleteItemCommandInput, DeleteItemCommandOutput } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { RegisterDBInfo } from '../domain/register';
 import * as uuid from 'uuid';
 import { logger } from '../logger';
 import { QueryDBInfo } from '../domain/query';
 import { UpdateDBInfo } from '../domain/update';
+import { DeleteDBInfo } from '../domain/delete';
 logger.defaultMeta = { requestId: process.env.AWS_REQUESTID };
 
 export const ddbClient = new DynamoDBClient({ region: process.env.REGION });
@@ -77,6 +78,27 @@ export class AccessTodoTable {
 
     }
 
+    public static async deleteTodo(deleteDBInfo: DeleteDBInfo): Promise<DeleteItemCommandOutput> {
+
+        const params: DeleteItemCommandInput = {
+            TableName: process.env.TODO_TABLE_NAME,
+            Key: {
+                userName: { S: deleteDBInfo.username },
+                todoId: { S: deleteDBInfo.todoid }
+            }
+        }
+
+        try {
+            return ddbClient.send(this.executeDeleteItemCommand(params));
+        }
+        catch (err) {
+            logger.error({ message: 'dynamodb delete', error: err });
+            throw (err);
+        }
+    }
+
+    // ユニットテストを行うため，ddbClientに渡すコマンドを作成する処理を関数化
+
     public static executePutItemCommand(params: PutItemCommandInput): any {
         return new PutItemCommand(params)
     }
@@ -87,6 +109,10 @@ export class AccessTodoTable {
 
     public static executeUpdateItemCommand(params: UpdateItemCommandInput): any {
         return new UpdateItemCommand(params)
+    }
+
+    public static executeDeleteItemCommand(params: DeleteItemCommandInput): any {
+        return new DeleteItemCommand(params)
     }
 
 }
