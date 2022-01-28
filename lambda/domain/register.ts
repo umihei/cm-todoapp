@@ -16,7 +16,7 @@ export class RegisterDomain {
             await AccessTodoTable.registerNewTodo(registerDBInfo);
         }
         catch (err) {
-            logger.error(err);
+            logger.error({ message: 'dynamodb put error', error: err });
             throw (err);
         }
 
