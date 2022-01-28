@@ -105,7 +105,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
     // TODOの更新に必要な情報を揃える
     const updateInfo: UpdateDBInfo = {
         username: event.pathParameters.username,
-        todoid: event.pathParameters.username,
+        todoid: event.pathParameters.todoid,
         title: JSON.parse(event.body).title,
         description: JSON.parse(event.body).description,
     }
