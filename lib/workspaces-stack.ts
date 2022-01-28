@@ -90,6 +90,33 @@ export class TodoappStack extends cdk.Stack {
 
     todoTable.grantReadWriteData(queryFn);
 
+    const updateFn = new nodejs.NodejsFunction(this, 'update', {
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_14_X,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      entry: "lambda/handler/updateHandler.ts",
+      environment: {
+        TODO_TABLE_NAME: todoTable.tableName,
+        REGION: 'ap-northeast-1',
+      },
+    });
+
+    todoTable.grantReadWriteData(updateFn);
+
+    const deleteFn = new nodejs.NodejsFunction(this, 'delete', {
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_14_X,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      entry: "lambda/handler/deleteHandler.ts",
+      environment: {
+        TODO_TABLE_NAME: todoTable.tableName,
+        REGION: 'ap-northeast-1',
+      },
+    });
+
+    todoTable.grantReadWriteData(deleteFn);
 
     const authorizer = new authz.HttpUserPoolAuthorizer(
       'user-pool-authorizer',
@@ -126,6 +153,21 @@ export class TodoappStack extends cdk.Stack {
         queryFn),
     });
 
+    httpApi.addRoutes({
+      methods: [HttpMethod.PUT],
+      path: '/users/{username}/todos/{todoid}',
+      integration: new intg.HttpLambdaIntegration(
+        'protected-fn-integration',
+        updateFn),
+    });
+
+    httpApi.addRoutes({
+      methods: [HttpMethod.DELETE],
+      path: '/users/{username}/todos/{todoid}',
+      integration: new intg.HttpLambdaIntegration(
+        'protected-fn-integration',
+        deleteFn),
+    });
 
 
     new cdk.CfnOutput(this, 'OutputApiUrl', { value: httpApi.url! });
