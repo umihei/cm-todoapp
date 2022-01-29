@@ -54,51 +54,6 @@ describe('todo table service call', (): void => {
 
     });
 
-    test('register ddbClient error', async () => {
-
-        // APIを実行する関数をモック化
-        ddbClient.send = jest.fn().mockRejectedValue({
-            promise: jest.fn().mockRejectedValue('error')
-        });
-
-        // PutItemCommandを実行する関数をモック化
-        AccessTodoTable.executePutItemCommand = jest.fn().mockReturnValue(null);
-
-        // DBへの登録処理を実行する関数へ渡すパラメタ
-        const InputParameter: RegisterDBInfo = {
-            username: 'tarako',
-            title: 'あのこと',
-            description: 'あれやって，これやって'
-        };
-
-        // PutItemCommandへ渡すパラメタの期待値
-        const putItemCommandInputParams = {
-            TableName: 'local-todo',
-            Item: {
-                userName: { S: InputParameter.username },
-                todoId: { S: expect.any(String) },
-                title: { S: InputParameter.title },
-                description: { S: InputParameter.description },
-                lastUpdateDateTime: { S: expect.any(String) },
-            },
-        };
-
-        // DBへの登録処理を実行
-        // const response = await AccessTodoTable.registerNewTodo(InputParameter)
-
-        await expect(AccessTodoTable.registerNewTodo(InputParameter)).rejects.toThrow(new Error('error'))
-
-        // // モック化した関数が１回だけコールされたことをテスト
-        // expect(AccessTodoTable.executePutItemCommand).toHaveBeenCalledTimes(1);
-
-        // // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
-        // expect(AccessTodoTable.executePutItemCommand).toHaveBeenCalledWith(putItemCommandInputParams);
-
-        // // モック化した関数が１回だけコールされたことをテスト
-        // expect(ddbClient.send).toHaveBeenCalledTimes(1);
-
-    });
-
     test('query', async () => {
 
         // APIを実行する関数をモック化
