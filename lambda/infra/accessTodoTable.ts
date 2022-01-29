@@ -25,12 +25,8 @@ export class AccessTodoTable {
             },
         };
 
-        try {
-            return await ddbClient.send(this.executePutItemCommand(params));
-        } catch (err) {
-            logger.error({ message: 'dynamodb put ', error: err });
-            throw (err);
-        }
+        return ddbClient.send(this.executePutItemCommand(params));
+
     }
 
     public static async queryTodo(queryDBinfo: QueryDBInfo): Promise<QueryCommandOutput> {
@@ -43,13 +39,8 @@ export class AccessTodoTable {
             },
         }
 
-        try {
-            return ddbClient.send(this.executeQueryCommand(params));
-        }
-        catch (err) {
-            logger.error({ message: 'dynamodb query', error: err });
-            throw (err)
-        }
+        return ddbClient.send(this.executeQueryCommand(params));
+
     }
 
     public static async updateTodo(updateDBInfo: UpdateDBInfo): Promise<UpdateItemCommandOutput> {
@@ -68,13 +59,7 @@ export class AccessTodoTable {
             }
         }
 
-        try {
-            return ddbClient.send(this.executeUpdateItemCommand(params));
-        }
-        catch (err) {
-            logger.error({ messsage: 'dynamodb update', error: err });
-            throw (err);
-        }
+        return ddbClient.send(this.executeUpdateItemCommand(params));
 
     }
 
@@ -88,16 +73,11 @@ export class AccessTodoTable {
             }
         }
 
-        try {
-            return ddbClient.send(this.executeDeleteItemCommand(params));
-        }
-        catch (err) {
-            logger.error({ message: 'dynamodb delete', error: err });
-            throw (err);
-        }
+        return ddbClient.send(this.executeDeleteItemCommand(params));
+
     }
 
-    // ユニットテストを行うため，ddbClientに渡すコマンドを作成する処理を関数化
+    // ハンドラー層とドメイン層のユニットテストを行うため，ddbClientに渡すコマンドを作成する処理を関数化
 
     public static executePutItemCommand(params: PutItemCommandInput): any {
         return new PutItemCommand(params)
