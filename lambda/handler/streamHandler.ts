@@ -8,7 +8,7 @@ import { NodeHttpHandler } from "@aws-sdk/node-http-handler"
 import { Sha256 } from "@aws-crypto/sha256-browser"
 
 export interface IndexInfo {
-    index: string,
+    id: string,
     convertedDocument: any[]
 }
 
