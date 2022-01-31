@@ -7,6 +7,10 @@ import { SignatureV4 } from "@aws-sdk/signature-v4"
 import { NodeHttpHandler } from "@aws-sdk/node-http-handler"
 import { Sha256 } from "@aws-crypto/sha256-browser"
 
+export interface IndexInfo {
+    index: string,
+    convertedDocument: any[]
+}
 
 export const handler = async (event: DynamoDBStreamEvent) => {
 
