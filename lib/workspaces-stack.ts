@@ -7,6 +7,11 @@ import * as nodejs from '@aws-cdk/aws-lambda-nodejs';
 import * as authz from '@aws-cdk/aws-apigatewayv2-authorizers';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import * as os from '@aws-cdk/aws-opensearchservice';
+import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
+import { StartingPosition } from '@aws-cdk/aws-lambda';
+import { PolicyStatement } from '@aws-cdk/aws-iam';
+import { RemovalPolicy } from '@aws-cdk/core';
 
 export interface TodoappStackProps extends cdk.StackProps {
   callbackUrls: string[];
@@ -60,7 +65,42 @@ export class TodoappStack extends cdk.Stack {
     const todoTable = new dynamodb.Table(this, 'todoTable', {
       partitionKey: { name: 'userName', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'todoId', type: dynamodb.AttributeType.STRING },
+      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
+
+    // opensearch service
+    const osDomain = new os.Domain(this, 'opensearch', {
+      version: os.EngineVersion.OPENSEARCH_1_0,
+      capacity: {
+        dataNodeInstanceType: 't3.small.search',
+      },
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    })
+
+    // dynamodb streaming reciever fn
+    const streamingRecieverFn = new nodejs.NodejsFunction(this, 'streamingFn', {
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_14_X,
+      entry: "lambda/handler/streamHandler.ts",
+      environment: {
+        OS_DOMAIN: osDomain.domainEndpoint,
+        OS_INDEX: todoTable.tableName,
+        PK: todoTable.schema().partitionKey.name,
+        SK: todoTable.schema().sortKey!.name,
+        REGION: 'ap-northeast-1',
+      },
+    })
+
+    streamingRecieverFn.addEventSource(new DynamoEventSource(todoTable, {
+      startingPosition: StartingPosition.TRIM_HORIZON
+    }));
+
+    osDomain.grantReadWrite(streamingRecieverFn);
+
+    streamingRecieverFn.addToRolePolicy(new PolicyStatement({
+      actions: ["es:*"],
+      resources: ["*"],
+    }))
 
     const registerFn = new nodejs.NodejsFunction(this, 'register', {
       handler: 'handler',
