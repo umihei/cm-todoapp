@@ -7,8 +7,6 @@ import { SignatureV4 } from "@aws-sdk/signature-v4"
 import { NodeHttpHandler } from "@aws-sdk/node-http-handler"
 import { Sha256 } from "@aws-crypto/sha256-browser"
 
-// const {Client} = require('@elastic/elasticsearch')
-
 
 export const handler = async (event: DynamoDBStreamEvent) => {
 
