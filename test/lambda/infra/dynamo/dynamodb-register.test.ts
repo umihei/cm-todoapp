@@ -189,4 +189,5 @@ describe('todo table service call', (): void => {
         expect(ddbClient.send).toHaveBeenCalledTimes(1);
 
     });
+
 });
