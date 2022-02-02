@@ -36,7 +36,6 @@
     "undefined": "^0.1.0"
   },
   "dependencies": {
-    "@acuris/aws-es-connection": "^2.3.0",
     "@aws-cdk/core": "1.138.2",
     "@aws-crypto/sha256-browser": "^2.0.1",
     "@aws-sdk/client-dynamodb": "^3.47.0",
@@ -45,7 +44,6 @@
     "@aws-sdk/protocol-http": "^3.49.0",
     "@aws-sdk/signature-v4": "^3.49.0",
     "@aws-sdk/util-dynamodb": "^3.48.0",
-    "@elastic/elasticsearch": "^7.13.0",
     "@opensearch-project/opensearch": "^1.0.2",
     "@types/jwk-to-pem": "^2.0.1",
     "@types/log4js": "^2.3.5",

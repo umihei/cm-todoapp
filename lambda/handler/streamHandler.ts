@@ -12,7 +12,7 @@ export interface IndexInfo {
 export const handler = async (event: DynamoDBStreamEvent) => {
 
     logger.info("DynamoDB to ES synchronize event triggered");
-    logger.info({ message: "Received event object:", data: JSON.stringify(event) });
+    logger.info({ message: "Received event object:", data: event });
 
     if (!event["Records"]) {
         logger.info("No records to process. Exiting");
@@ -26,7 +26,7 @@ export const handler = async (event: DynamoDBStreamEvent) => {
 
             const keys = record.dynamodb!.Keys;
 
-            logger.info({ message: 'record', data: JSON.stringify(record) });
+            logger.info({ message: 'record', data: record });
 
             // todo idをドキュメントのidにする
             const id = keys?.[process.env.SK!].S;
