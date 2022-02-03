@@ -72,6 +72,75 @@ describe('query Input/Output', (): void => {
 
     })
 
+    test('query domain with query string ok pattern', async () => {
+        const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
+            requestContext: {
+                authorizer: {
+                    jwt: {
+                        claims: {
+                            username: 'tarako'
+                        }
+                    }
+                }
+            },
+            pathParameters: {
+                username: 'tarako'
+            },
+            queryStringParameters: {
+                query: 'test'
+            },
+            headers: {
+                authorization: "test-auth"
+            }
+        } as any;
+
+        const inputContext: Context = {
+            awsRequestId: 'test-id'
+        } as any;
+
+        const pseudoReturnVal = {
+            Items: [{
+                todoId: { S: 'testid' },
+                title: { S: 'あのこと' },
+                description: { S: 'あれやこれや' }
+            }]
+        }
+
+        // DBにPutする処理をMock化
+        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+
+        const response = await handler(inputEvent, inputContext);
+
+        // モック化した関数へ渡すパラメタの期待値
+        const expectedQueryDBInfo: QueryDBInfo = {
+            username: 'tarako',
+            query: 'test'
+        }
+
+        // ハンドラが返す値の期待値
+        const expected = {
+            statusCode: 200,
+            body: JSON.stringify(
+                [{
+                    todoId: 'testid',
+                    title: 'あのこと',
+                    description: 'あれやこれや'
+                }]
+            ),
+        };
+
+        // DynamodbへのPutが１回だけであることをテスト
+        expect(queryTodoMock.mock.calls.length).toBe(1);
+
+        // registerNewTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
+        // 兼オブジェクト変換テスト
+        expect(queryTodoMock.mock.calls[0][0]).toEqual(expectedQueryDBInfo);
+
+        // レスポンスが期待通りであることをテスト
+        expect(response).toEqual(expected);
+
+    })
+
     test('query domain path param is not consistent with jwt username', async () => {
         const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
             requestContext: {
