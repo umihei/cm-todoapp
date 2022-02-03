@@ -49,12 +49,3 @@ docker-compose up
 4. open id, tokenにチェックをいれ，Authorizeをクリック（Client Secrectは入力不要）
 5. 遷移先のページで新しくアカウントを作成する
 6. Try it outからAPIを実行する
-
-## Useful commands
-
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
