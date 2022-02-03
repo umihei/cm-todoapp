@@ -127,33 +127,28 @@ export class AccessOpenSearch {
 
         const request = new HttpRequest({
             body: JSON.stringify({
-                query: {
+                query:
+                {
                     "bool": {
-                        "should": [{
-                            "match": {
-                                "title": query
-                            }
-                        },
-                        {
-                            "match": {
-                                "description": query
-                            }
-                        }
+                        "must": [
+                            {
+                                "bool": {
+                                    "should": [
+                                        { "match": { "title": query } },
+                                        { "match": { "description": query } }
+                                    ]
+                                }
+                            },
+                            {
+                                "bool": {
+                                    "must": {
+                                        "term": { "userName": username }
+                                    }
+                                }
+                            },
                         ],
-                        "filter": {
-                            "term": { "userName": username }
-                        }
                     }
                 }
-
-
-                // {
-                //     "simple_query_string": {
-                //         "query": query,
-                //         "fields": ["title", "description"],
-                //         "default_operator": "or"
-                //     }
-                // }
             }),
             headers: {
                 'Content-Type': 'application/json',
