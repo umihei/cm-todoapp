@@ -42,11 +42,19 @@ export class QueryDomain {
         try {
 
             if (queryDBInfo.query) {
-                const response = await AccessOpenSearch.search(queryDBInfo.query, queryDBInfo.username);
+                const response = JSON.parse(await AccessOpenSearch.search(queryDBInfo.query, queryDBInfo.username)) as OpenSearchSearchResult;
                 logger.info({ message: 'open search search result', data: response });
                 const todos = response.hits.hits.map(todo => todo._source)
                 logger.info({ message: 'todos', data: todos });
-                return todos
+                const withoutUserName = todos.map((res) => {
+                    return {
+                        todoId: res.todoId,
+                        title: res.title,
+                        description: res.description,
+                        lastUpdateDateTime: res.lastUpdateDateTime
+                    }
+                })
+                return withoutUserName;
             }
             const response = await AccessTodoTable.queryTodo(queryDBInfo);
             logger.info({ message: 'response', data: response })
