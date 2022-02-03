@@ -133,6 +133,13 @@ export class TodoappStack extends cdk.Stack {
 
     todoTable.grantReadWriteData(queryFn);
 
+    osDomain.grantRead(queryFn);
+
+    queryFn.addToRolePolicy(new PolicyStatement({
+      actions: ["es:*"],
+      resources: ["*"],
+    }))
+
     const updateFn = new nodejs.NodejsFunction(this, 'update', {
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_14_X,
