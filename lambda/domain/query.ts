@@ -9,6 +9,10 @@ export interface QueryDBInfo {
     query?: string
 }
 
+export interface TodoFull extends Todo {
+    lastUpdateDateTime: string
+}
+
 export interface Todo extends WithoutUserNameTodo {
     userName: string
 }
@@ -17,6 +21,18 @@ export interface WithoutUserNameTodo {
     todoId: string,
     title: string,
     description: string
+}
+
+export interface OpenSearchSearchResult {
+    hits: hits
+}
+
+export interface hits {
+    hits: innerHits[]
+}
+
+export interface innerHits {
+    _source: TodoFull
 }
 
 export class QueryDomain {
@@ -28,7 +44,9 @@ export class QueryDomain {
             if (queryDBInfo.query) {
                 const response = await AccessOpenSearch.search(queryDBInfo.query, queryDBInfo.username);
                 logger.info({ message: 'open search search result', data: response });
-                return response
+                const todos = response.hits.hits.map(todo => todo._source)
+                logger.info({ message: 'todos', data: todos });
+                return todos
             }
             const response = await AccessTodoTable.queryTodo(queryDBInfo);
             logger.info({ message: 'response', data: response })
