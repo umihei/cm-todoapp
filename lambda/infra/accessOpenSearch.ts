@@ -123,17 +123,37 @@ export class AccessOpenSearch {
 
     }
 
-    public static async search(query: string) {
+    public static async search(query: string, username: string) {
 
         const request = new HttpRequest({
             body: JSON.stringify({
                 query: {
-                    "simple_query_string": {
-                        "query": query,
-                        "fields": ["title", "description"],
-                        "default_operator": "or"
+                    "bool": {
+                        "should": [{
+                            "match": {
+                                "title": query
+                            }
+                        },
+                        {
+                            "match": {
+                                "description": query
+                            }
+                        }
+                        ],
+                        "filter": {
+                            "term": { "userName": username }
+                        }
                     }
                 }
+
+
+                // {
+                //     "simple_query_string": {
+                //         "query": query,
+                //         "fields": ["title", "description"],
+                //         "default_operator": "or"
+                //     }
+                // }
             }),
             headers: {
                 'Content-Type': 'application/json',
