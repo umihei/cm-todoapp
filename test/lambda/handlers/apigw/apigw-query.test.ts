@@ -1,3 +1,7 @@
+process.env.OS_DOMAIN = 'local'
+process.env.OS_INDEX = 'local'
+const type = '_doc'
+
 import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
 import { handler } from '../../../../lambda/handler/queryHandler';
 import { AccessTodoTable } from '../../../../lambda/infra/accessTodoTable';
