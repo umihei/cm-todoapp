@@ -5,9 +5,11 @@ const type = '_doc'
 import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
 import { handler } from '../../../../lambda/handler/queryHandler';
 import { AccessTodoTable } from '../../../../lambda/infra/accessTodoTable';
+import { AccessOpenSearch } from '../../../../lambda/infra/accessOpenSearch';
 import { QueryDBInfo } from '../../../../lambda/domain/query';
 
 jest.mock('../../../../lambda/infra/accessTodoTable');
+jest.mock('../../../../lambda/infra/accessOpenSearch');
 
 describe('query Input/Output', (): void => {
 
@@ -110,8 +112,11 @@ describe('query Input/Output', (): void => {
             }]
         }
 
-        // DBにPutする処理をMock化
-        const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+        // // DBにPutする処理をMock化
+        // const queryTodoMock = (AccessTodoTable.queryTodo as jest.Mock).mockResolvedValue(pseudoReturnVal);
+
+        // OpenSearchにクエリする処理をMock化
+        const queryTodoMock = (AccessOpenSearch.search as jest.Mock).mockResolvedValue(pseudoReturnVal);
 
         const response = await handler(inputEvent, inputContext);
 
@@ -125,11 +130,7 @@ describe('query Input/Output', (): void => {
         const expected = {
             statusCode: 200,
             body: JSON.stringify(
-                [{
-                    todoId: 'testid',
-                    title: 'あのこと',
-                    description: 'あれやこれや'
-                }]
+                pseudoReturnVal
             ),
         };
 
@@ -138,7 +139,7 @@ describe('query Input/Output', (): void => {
 
         // registerNewTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
         // 兼オブジェクト変換テスト
-        expect(queryTodoMock.mock.calls[0][0]).toEqual(expectedQueryDBInfo);
+        expect(queryTodoMock.mock.calls[0][0]).toEqual('test');
 
         // レスポンスが期待通りであることをテスト
         expect(response).toEqual(expected);
