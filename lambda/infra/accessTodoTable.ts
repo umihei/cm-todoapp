@@ -45,18 +45,42 @@ export class AccessTodoTable {
 
     public static async updateTodo(updateDBInfo: UpdateDBInfo): Promise<UpdateItemCommandOutput> {
 
+        let updateExpression = ""
+        let expressionAttributeValues = {}
+
+        if (updateDBInfo.title && updateDBInfo.description) {
+            updateExpression = "set title = :t, description = :d, lastUpdateDateTime = :l"
+            expressionAttributeValues = {
+                ":t": { S: updateDBInfo.title },
+                ":d": { S: updateDBInfo.description },
+                ":l": { S: (new Date()).toISOString() }
+            }
+        }
+
+        else if (updateDBInfo.title && !updateDBInfo.description) {
+            updateExpression = "set title = :t, lastUpdateDateTime = :l"
+            expressionAttributeValues = {
+                ":t": { S: updateDBInfo.title },
+                ":l": { S: (new Date()).toISOString() }
+            }
+        }
+
+        else if (!updateDBInfo.title && updateDBInfo.description) {
+            updateExpression = "set description = :d, lastUpdateDateTime = :l"
+            expressionAttributeValues = {
+                ":d": { S: updateDBInfo.description },
+                ":l": { S: (new Date()).toISOString() }
+            }
+        }
+
         const params: UpdateItemCommandInput = {
             TableName: process.env.TODO_TABLE_NAME,
             Key: {
                 userName: { S: updateDBInfo.username },
                 todoId: { S: updateDBInfo.todoid },
             },
-            UpdateExpression: "set title = :t, description = :d, lastUpdateDateTime = :l",
-            ExpressionAttributeValues: {
-                ":t": { S: updateDBInfo.title },
-                ":d": { S: updateDBInfo.description },
-                ":l": { S: (new Date()).toISOString() }
-            }
+            UpdateExpression: updateExpression,
+            ExpressionAttributeValues: expressionAttributeValues
         }
 
         return ddbClient.send(this.executeUpdateItemCommand(params));

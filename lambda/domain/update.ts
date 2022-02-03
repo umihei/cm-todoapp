@@ -5,8 +5,8 @@ logger.defaultMeta = { requestId: process.env.AWS_REQUESTID };
 export interface UpdateDBInfo {
     username: string,
     todoid: string,
-    title: string,
-    description: string,
+    title?: string,
+    description?: string,
 }
 
 export class UpdateDomain {

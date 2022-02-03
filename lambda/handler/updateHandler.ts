@@ -29,7 +29,6 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
 
     // bodyのスキーマを定義
     const bodySchema = {
-        required: ['title', 'description'],
         type: 'object',
         properties: {
             title: {
@@ -106,8 +105,24 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
     const updateInfo: UpdateDBInfo = {
         username: event.pathParameters.username,
         todoid: event.pathParameters.todoid,
-        title: JSON.parse(event.body).title,
-        description: JSON.parse(event.body).description,
+    }
+
+    if (JSON.parse(event.body).title) {
+        updateInfo.title = JSON.parse(event.body).title
+    }
+
+    if (JSON.parse(event.body).description) {
+        updateInfo.description = JSON.parse(event.body).description
+    }
+
+    // titleもdescriptionもからのときは，何もせず200を返す
+    if (!JSON.parse(event.body).title && !JSON.parse(event.body).description) {
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'OK',
+            } as Response),
+        };
     }
 
     logger.info({ message: 'updateInfo', data: updateInfo });
