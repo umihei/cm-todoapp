@@ -116,8 +116,16 @@ describe('opensearch service call', (): void => {
                             {
                                 "bool": {
                                     "should": [
-                                        { "match": { "title": query } },
-                                        { "match": { "description": query } }
+                                        {
+                                            "wildcard": {
+                                                "title": query + "*"
+                                            }
+                                        },
+                                        {
+                                            "wildcard": {
+                                                "description": query + '*'
+                                            }
+                                        }
                                     ]
                                 }
                             },
