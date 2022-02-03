@@ -111,10 +111,24 @@ describe('opensearch service call', (): void => {
         const request = new HttpRequest({
             body: JSON.stringify({
                 query: {
-                    "simple_query_string": {
-                        "query": query,
-                        "fields": ["title", "description"],
-                        "default_operator": "or"
+                    "bool": {
+                        "must": [
+                            {
+                                "bool": {
+                                    "should": [
+                                        { "match": { "title": query } },
+                                        { "match": { "description": query } }
+                                    ]
+                                }
+                            },
+                            {
+                                "bool": {
+                                    "must": {
+                                        "term": { "userName": username }
+                                    }
+                                }
+                            },
+                        ],
                     }
                 }
             }),
