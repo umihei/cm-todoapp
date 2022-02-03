@@ -4,7 +4,7 @@ import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { HttpRequest } from '@aws-sdk/protocol-http';
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { IndexInfo } from '../handler/streamHandler';
-
+import { OpenSearchSearchResult } from '../domain/query'
 
 const region = 'ap-northeast-1';
 const domain = process.env.OS_DOMAIN as string;
@@ -52,7 +52,7 @@ export class AccessOpenSearch {
     }
 
     public static async resolveResponse(response: any) {
-        let responseBody = '';
+        let responseBody: any;
         const body = await new Promise((resolve, reject) => {
             response.body.on('data', (chunk: any) => {
                 responseBody += chunk;
@@ -123,7 +123,7 @@ export class AccessOpenSearch {
 
     }
 
-    public static async search(query: string, username: string) {
+    public static async search(query: string, username: string): Promise<OpenSearchSearchResult> {
 
         const request = new HttpRequest({
             body: JSON.stringify({
