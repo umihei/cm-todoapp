@@ -6,6 +6,18 @@
 
 cognitoで認証，認可の機能を担い，Api GatewayとLambda，DynamoDBでRest Apiを構成する．日本語の部分一致検索にはOpenSearchを利用する．
 
+## 主なディレクトリ構造
+
+```
+bin                  CDKソース
+doc
+ todoapi.html    　　 API仕様書
+lambda               ソース
+lib                  CDKソース
+test                 テスト
+todoapp-swaggerui    APIテスト用SwaggerUIDockerファイル
+```
+
 ## デプロイ方法
 
 CDKを使ってデプロイする．
@@ -21,7 +33,12 @@ contextを使って，Cognitoのドメインプレフィックスを渡す．
 cdk deploy -c domainprefix={your domain prefix}
 ```
 (はじめてCDKを使う場合は，`cdk bootstrap`が必要)
-3. デプロイ完了後，OpenSearchのIndexを作成するLambda関数（createIndex）を一回だけ実行する．
+3. デプロイ完了後，OpenSearchのIndexを作成するLambda関数（createIndex）を一回だけ実行する．  
+コンソールにログインし，stack名の後ろにcreateIndexとついている関数を選ぶ
+![createIndexFn](doc/asset/createIndexFn.png)
+テストタブを選び，テストを一回だけクリックし，成功することを確認する．
+![createTest](doc/asset/createTest.png)
+もし関数の実行に失敗しても，TodoAPI自体は問題なく利用できる．ただし，その場合は，日本語での部分一致検索がうまくいかない．
 
 ## APIのテスト方法
 swagger uiのDockerイメージを立ち上げてAPIをテストを行う．
@@ -45,7 +62,9 @@ tokenUrl: 'https://{your domain prefix}.auth.ap-northeast-1.amazoncognito.com/oa
 cd todoapp-swaggerui
 docker-compose up
 ```
-3. 画面右上の鍵のアイコンのAuthorizeをクリック
-4. open id, tokenにチェックをいれ，Authorizeをクリック（Client Secrectは入力不要）
-5. 遷移先のページで新しくアカウントを作成する
-6. Try it outからAPIを実行する
+3. `localhost:3200`にアクセスする．
+4. 画面右上の鍵のアイコンのAuthorizeをクリック
+5. open id, tokenにチェックをいれ，Authorizeをクリック（Client Secrectは入力不要）
+![authorize](doc/asset/authorize.png)
+6. 遷移先のページでSign upを実施し，メールで認証を行う．
+7. 認証が成功したら，Try it outからAPIを実行する
