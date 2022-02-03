@@ -125,6 +125,9 @@ export class TodoappStack extends cdk.Stack {
       environment: {
         TODO_TABLE_NAME: todoTable.tableName,
         REGION: 'ap-northeast-1',
+        OS_DOMAIN: osDomain.domainEndpoint,
+        OS_INDEX: todoTable.tableName,
+        SK: todoTable.schema().sortKey!.name,
       },
     });
 
