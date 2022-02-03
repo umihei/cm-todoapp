@@ -168,6 +168,50 @@ export class TodoappStack extends cdk.Stack {
 
     todoTable.grantReadWriteData(deleteFn);
 
+    const createIndexFn = new nodejs.NodejsFunction(this, 'createIndex', {
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_14_X,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 128,
+      entry: "lambda/infra/createOpenSearchIndex.ts",
+      environment: {
+        TODO_TABLE_NAME: todoTable.tableName,
+        REGION: 'ap-northeast-1',
+        OS_DOMAIN: osDomain.domainEndpoint,
+        OS_INDEX: todoTable.tableName,
+        SK: todoTable.schema().sortKey!.name,
+      },
+    });
+
+    osDomain.grantRead(createIndexFn);
+
+    createIndexFn.addToRolePolicy(new PolicyStatement({
+      actions: ["es:*"],
+      resources: ["*"],
+    }))
+
+    const deleteIndexFn = new nodejs.NodejsFunction(this, 'deleteIndex', {
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_14_X,
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 128,
+      entry: "lambda/infra/deleteOpenSearchIndex.ts",
+      environment: {
+        TODO_TABLE_NAME: todoTable.tableName,
+        REGION: 'ap-northeast-1',
+        OS_DOMAIN: osDomain.domainEndpoint,
+        OS_INDEX: 'todoindex',
+        SK: todoTable.schema().sortKey!.name,
+      },
+    });
+
+    osDomain.grantRead(deleteIndexFn);
+
+    deleteIndexFn.addToRolePolicy(new PolicyStatement({
+      actions: ["es:*"],
+      resources: ["*"],
+    }))
+
     const authorizer = new authz.HttpUserPoolAuthorizer(
       'user-pool-authorizer',
       userPool,

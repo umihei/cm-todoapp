@@ -22,6 +22,92 @@ export const signer = new SignatureV4({
 
 export class AccessOpenSearch {
 
+    public static async deleteIndex() {
+
+        const request = new HttpRequest({
+            headers: {
+                'Content-Type': 'application/json',
+                'host': domain
+            },
+            hostname: domain,
+            method: 'DELETE',
+            path: index
+        })
+
+        console.log('request ', JSON.stringify(request))
+
+        const signedRequest = await signer.sign(request);
+        console.log('signedRequest', JSON.stringify(signedRequest))
+
+        const res = await client.handle(signedRequest as any);
+
+        console.log('res', res)
+        const { response } = res;
+        console.log('response', response)
+
+        return this.resolveResponse(response)
+
+    }
+
+    public static async createIndex() {
+
+        const request = new HttpRequest({
+            body: JSON.stringify({
+                "settings": {
+                    "analysis": {
+                        "analyzer": {
+                            "todo_kuromoji_analyzer": {
+                                "type": "custom",
+                                "tokenizer": "kuromoji_tokenizer"
+                            }
+                        }
+                    }
+                },
+                "mappings": {
+                    "properties": {
+                        "title": {
+                            "type": "text",
+                            "analyzer": "todo_kuromoji_analyzer"
+                        },
+                        "description": {
+                            "type": "text",
+                            "analyzer": "todo_kuromoji_analyzer"
+                        },
+                        "lastUpdateDateTime": {
+                            "type": "text"
+                        },
+                        "todoId": {
+                            "type": "text"
+                        },
+                        "userName": {
+                            "type": "text"
+                        }
+                    }
+                }
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'host': domain
+            },
+            hostname: domain,
+            method: 'PUT',
+            path: index
+        })
+
+        console.log('request ', JSON.stringify(request))
+
+        const signedRequest = await signer.sign(request);
+        console.log('signedRequest', JSON.stringify(signedRequest))
+
+        const res = await client.handle(signedRequest as any);
+
+        console.log('res', res)
+        const { response } = res;
+        console.log('response', response)
+
+        return this.resolveResponse(response)
+    }
+
     public static async index({ id, convertedDocument }: IndexInfo) {
 
         const request = new HttpRequest({
@@ -133,8 +219,18 @@ export class AccessOpenSearch {
                             {
                                 "bool": {
                                     "should": [
-                                        { "match": { "title": query } },
-                                        { "match": { "description": query } }
+                                        {
+                                            "wildcard": {
+                                                "title": query + "*"
+                                            }
+                                        },
+                                        {
+                                            "wildcard": {
+                                                "description": query + '*'
+                                            }
+                                        }
+                                        // { "match": { "title": query } },
+                                        // { "match": { "description": query } }
                                     ]
                                 }
                             },
