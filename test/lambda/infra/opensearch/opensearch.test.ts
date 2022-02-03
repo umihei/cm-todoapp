@@ -106,6 +106,7 @@ describe('opensearch service call', (): void => {
         AccessOpenSearch.resolveResponse = jest.fn().mockReturnValue(null);
 
         const query = 'test';
+        const username = 'test';
 
         const request = new HttpRequest({
             body: JSON.stringify({
@@ -126,7 +127,7 @@ describe('opensearch service call', (): void => {
             path: index + '/' + type + '/_search'
         })
 
-        await AccessOpenSearch.search(query);
+        await AccessOpenSearch.search(query, username);
 
         expect(signer.sign).toHaveBeenCalledTimes(1);
         expect(client.handle).toHaveBeenCalledTimes(1);
