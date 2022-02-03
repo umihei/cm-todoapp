@@ -229,8 +229,6 @@ export class AccessOpenSearch {
                                                 "description": query + '*'
                                             }
                                         }
-                                        // { "match": { "title": query } },
-                                        // { "match": { "description": query } }
                                     ]
                                 }
                             },
