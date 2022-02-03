@@ -105,11 +105,49 @@ describe('query Input/Output', (): void => {
         } as any;
 
         const pseudoReturnVal = {
-            Items: [{
-                todoId: { S: 'testid' },
-                title: { S: 'あのこと' },
-                description: { S: 'あれやこれや' }
-            }]
+            "took": 55,
+            "timed_out": false,
+            "_shards": {
+                "total": 5,
+                "successful": 5,
+                "skipped": 0,
+                "failed": 0
+            },
+            "hits": {
+                "total": {
+                    "value": 17,
+                    "relation": "eq"
+                },
+                "max_score": 0.9186288,
+                "hits": [
+                    {
+                        "_index": "todoappstack-todotablec937f2f9-mzkwr8hwo2i7",
+                        "_type": "_doc",
+                        "_id": "4b8bdc1d-aa5b-49a4-a537-fab7b8ba6337",
+                        "_score": 0.9186288,
+                        "_source": {
+                            "lastUpdateDateTime": "2022-02-01T04:58:01.789Z",
+                            "description": "テストテスト",
+                            "title": "test",
+                            "todoId": "4b8bdc1d-aa5b-49a4-a537-fab7b8ba6337",
+                            "userName": "tarako"
+                        }
+                    },
+                    {
+                        "_index": "todoappstack-todotablec937f2f9-mzkwr8hwo2i7",
+                        "_type": "_doc",
+                        "_id": "93e194b7-e8f0-4301-a7ae-2778bd72b9a8",
+                        "_score": 0,
+                        "_source": {
+                            "lastUpdateDateTime": "2022-02-02T07:18:18.802Z",
+                            "description": "あれをこうする",
+                            "title": "あのこと",
+                            "todoId": "93e194b7-e8f0-4301-a7ae-2778bd72b9a8",
+                            "userName": "tarako"
+                        }
+                    },
+                ]
+            }
         }
 
         // // DBにPutする処理をMock化
@@ -129,8 +167,22 @@ describe('query Input/Output', (): void => {
         // ハンドラが返す値の期待値
         const expected = {
             statusCode: 200,
-            body: JSON.stringify(
-                pseudoReturnVal
+            body: JSON.stringify([
+                {
+                    "lastUpdateDateTime": "2022-02-01T04:58:01.789Z",
+                    "description": "テストテスト",
+                    "title": "test",
+                    "todoId": "4b8bdc1d-aa5b-49a4-a537-fab7b8ba6337",
+                    "userName": "tarako"
+                },
+                {
+                    "lastUpdateDateTime": "2022-02-02T07:18:18.802Z",
+                    "description": "あれをこうする",
+                    "title": "あのこと",
+                    "todoId": "93e194b7-e8f0-4301-a7ae-2778bd72b9a8",
+                    "userName": "tarako"
+                }
+            ]
             ),
         };
 
