@@ -1,4 +1,5 @@
 import { AccessTodoTable } from '../infra/accessTodoTable';
+import { AccessOpenSearch } from '../infra/accessOpenSearch';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { logger } from '../logger';
 logger.defaultMeta = { requestId: process.env.AWS_REQUESTID };
@@ -23,6 +24,12 @@ export class QueryDomain {
     public static async queryTodo(queryDBInfo: QueryDBInfo) {
 
         try {
+
+            if (queryDBInfo.query) {
+                const response = await AccessOpenSearch.search(queryDBInfo.query, queryDBInfo.username);
+                logger.info({ message: 'open search search result', data: response });
+                return response
+            }
             const response = await AccessTodoTable.queryTodo(queryDBInfo);
             logger.info({ message: 'response', data: response })
             const { Items } = response;

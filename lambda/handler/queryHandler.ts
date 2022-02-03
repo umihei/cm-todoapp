@@ -1,4 +1,5 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, Context } from 'aws-lambda';
+import { EventEmitter } from 'events';
 import { QueryDomain, QueryDBInfo, WithoutUserNameTodo } from '../domain/query';
 import { logger } from '../logger';
 
@@ -48,6 +49,11 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer, co
     // TODOの検索に必要な情報を揃える
     const queryDBInfo: QueryDBInfo = {
         username: event.pathParameters.username,
+    }
+
+    if (event.queryStringParameters) {
+        logger.info('query string found.')
+        queryDBInfo.query = event.queryStringParameters.query
     }
 
     logger.info({ message: 'queryDBInfo', data: queryDBInfo });
