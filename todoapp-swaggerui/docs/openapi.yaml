@@ -1,0 +1,337 @@
+openapi: 3.0.3
+info:
+  title: todo app API overview
+  version: 1.0.0
+  description: todo app rest api
+servers:
+  - url: '{your api gw endpoint}'
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: 'For more information, see https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-userpools-server-contract-reference.html'
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://{your domain prefix}.auth.ap-northeast-1.amazoncognito.com/oauth2/authorize'
+          tokenUrl: 'https://{your domain prefix}.auth.ap-northeast-1.amazoncognito.com/oauth2/token'
+          scopes:
+            openid: openid token
+paths:
+  '/users/{username}/todos':
+    post:
+      summary: Register
+      operationId: post-register
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Parameter is invalid.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Parameter is invalid.
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Internal Server Error.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Internal Server Error.
+      security:
+        - OAuth2:
+            - openid
+            - token
+      description: |-
+        TODOを登録する．  
+        TODOのタイトルと内容を送信する．
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: todo項目のタイトル
+                description:
+                  type: string
+                  description: todo項目の内容
+              required:
+                - title
+                - description
+            examples:
+              example-1:
+                value:
+                  title: あのこと
+                  description: あれをこうする
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+        description: ユーザ名
+    get:
+      summary: Query
+      operationId: get-users-$-username-todos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    todoId:
+                      type: string
+                      description: todo id
+                    title:
+                      type: string
+                      description: todo タイトル
+                    description:
+                      type: string
+                      description: todo 内容
+                    lastUpdateDateTime:
+                      type: string
+                      description: 最終更新日時
+                  required:
+                    - todoId
+                    - title
+                    - description
+                    - lastUpdateDateTime
+              examples:
+                example:
+                  value:
+                    - todoId: 2307939d-aeb2-43a8-b053-a54abc81288b
+                      title: あのこと
+                      description: あれをこうする
+                      lastUpdateDateTime: '2022-01-28T05:51:13.693Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Parameter is invalid.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Parameter is invalid.
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Internal Server Error.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Internal Server Error.
+      description: |-
+        searchWordが与えられると，登録済みのTODOのタイトルと内容から部分一致するものを探す．
+        searchWordがなければ，ユーザのTODO一覧を返す．
+      security:
+        - OAuth2:
+            - openid
+            - token
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: 検索ワード
+  '/users/{username}/todos/{todoid}':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+        description: ユーザ名
+      - schema:
+          type: string
+        name: todoid
+        in: path
+        required: true
+        description: todo id
+    put:
+      summary: Update
+      operationId: put-users-$-username-todos-$-todoid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Parameter is invalid.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Parameter is invalid.
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Internal Server Error.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Internal Server Error.
+      description: |-
+        TODOを更新する．  
+        TODOのIDと更新内容を指定する．
+      security:
+        - OAuth2:
+            - openid
+            - token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: TODOのタイトル
+                description:
+                  type: string
+                  description: TODOの内容
+        description: ''
+    delete:
+      summary: Delete
+      operationId: delete-users-$-username-todos-$-todoid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: OK
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Parameter is invalid.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Parameter is invalid.
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Internal Server Error.
+                required:
+                  - message
+              examples:
+                example:
+                  value:
+                    message: Internal Server Error.
+      description: TODOを削除する．
+      security:
+        - OAuth2:
+            - openid
+            - token
