@@ -33,11 +33,16 @@ contextを使って，Cognitoのドメインプレフィックスを渡す．
 cdk deploy -c domainprefix={your domain prefix}
 ```
 (はじめてCDKを使う場合は，`cdk bootstrap`が必要)
+
 3. デプロイ完了後，OpenSearchのIndexを作成するLambda関数（createIndex）を一回だけ実行する．  
 コンソールにログインし，stack名の後ろにcreateIndexとついている関数を選ぶ
+
 ![createIndexFn](doc/asset/createIndexFn.png)
+
 テストタブを選び，テストを一回だけクリックし，成功することを確認する．
+
 ![createTest](doc/asset/createTest.png)
+
 もし関数の実行に失敗しても，TodoAPI自体は問題なく利用できる．ただし，その場合は，日本語での部分一致検索がうまくいかない．
 
 ## APIのテスト方法
