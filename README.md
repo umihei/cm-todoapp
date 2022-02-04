@@ -21,12 +21,15 @@ todoapp-swaggerui    APIテスト用SwaggerUIDockerファイル
 ## デプロイ方法
 
 CDKを使ってデプロイする．
-
-1. 依存関係のインストール
+1. CDKをインストール(すみませんが，1.138.2を使ってください)
+```
+npm install -g cdk@1.138.2
+```
+2. 依存関係のインストール
 ```
 npm install
 ```
-2. デプロイ
+3. デプロイ
 contextを使って，Cognitoのドメインプレフィックスを渡す．
 適当な英数字を渡す（8iopk9jなど）.
 ```
@@ -34,7 +37,7 @@ cdk deploy -c domainprefix={your domain prefix}
 ```
 (はじめてCDKを使う場合は，`cdk bootstrap`が必要)
 
-3. デプロイ完了後，OpenSearchのIndexを作成するLambda関数（createIndex）を一回だけ実行する．  
+4. デプロイ完了後，OpenSearchのIndexを作成するLambda関数（createIndex）を一回だけ実行する．  
 コンソールにログインし，stack名の後ろにcreateIndexとついている関数を選ぶ
 
 ![createIndexFn](doc/asset/createIndexFn.png)
