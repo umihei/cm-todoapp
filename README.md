@@ -29,7 +29,7 @@ npm install -g cdk@1.138.2
 ```
 npm install
 ```
-3. デプロイ
+3. デプロイ  
 contextを使って，Cognitoのドメインプレフィックスを渡す．
 適当な英数字を渡す（8iopk9jなど）.
 ```
@@ -50,17 +50,18 @@ cdk deploy -c domainprefix={your domain prefix}
 
 ## APIのテスト方法
 swagger uiのDockerイメージを立ち上げてAPIをテストを行う．
-1. swagger-uiのDockerイメージの立ち上げ準備．`todoapp-swaggerui/.env`ファイルを編集する．
+1. swagger-uiのDockerイメージの立ち上げ準備．  
+`todoapp-swaggerui/.env`ファイルを編集する．
 ```
 OAUTH_CLIENT_ID={your oauth clinet id}
 DOMAIN_PREFIX={your domain prefix}
 ```
 `todoapp-swaggerui/docs/openapi.yaml`を編集する．
-7行目
+7行目にAPI Gatewayのエンドポイントを記載する．
 ```
 - url: {your api gw endpoint}
 ```
-15行目と16行目
+15行目のauthorizationUrl，16行目のtokenUrlにdomain prefixを記載．
 ```
 authorizationUrl: 'https://{your domain prefix}.auth.ap-northeast-1.amazoncognito.com/oauth2/authorize'
 tokenUrl: 'https://{your domain prefix}.auth.ap-northeast-1.amazoncognito.com/oauth2/token
