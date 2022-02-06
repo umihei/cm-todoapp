@@ -198,4 +198,111 @@ describe('opensearch service call', (): void => {
 
     })
 
+    test('create index api ok pattern', async () => {
+
+        signer.sign = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue(null)
+        });
+
+        client.handle = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue(null)
+        });
+
+        // ResponseをResolveする関数をモック化
+        AccessOpenSearch.resolveResponse = jest.fn().mockReturnValue(null);
+
+        const id = 'id';
+
+        const request = new HttpRequest({
+            body: JSON.stringify({
+                "settings": {
+                    "analysis": {
+                        "analyzer": {
+                            "todo_kuromoji_analyzer": {
+                                "type": "custom",
+                                "tokenizer": "kuromoji_tokenizer"
+                            }
+                        }
+                    }
+                },
+                "mappings": {
+                    "properties": {
+                        "title": {
+                            "type": "text",
+                            "analyzer": "todo_kuromoji_analyzer"
+                        },
+                        "description": {
+                            "type": "text",
+                            "analyzer": "todo_kuromoji_analyzer"
+                        },
+                        "lastUpdateDateTime": {
+                            "type": "text"
+                        },
+                        "todoId": {
+                            "type": "text"
+                        },
+                        "userName": {
+                            "type": "text"
+                        }
+                    }
+                }
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'host': domain
+            },
+            hostname: domain,
+            method: 'PUT',
+            path: index
+        })
+
+        await AccessOpenSearch.createIndex();
+
+        expect(signer.sign).toHaveBeenCalledTimes(1);
+        expect(client.handle).toHaveBeenCalledTimes(1);
+        expect(AccessOpenSearch.resolveResponse).toHaveBeenCalledTimes(1);
+
+        // signerを呼び出すパラメタが期待通りであるかテスト
+        expect(signer.sign).toHaveBeenCalledWith(request);
+
+
+    })
+
+    test('delete index api ok pattern', async () => {
+
+        signer.sign = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue(null)
+        });
+
+        client.handle = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue(null)
+        });
+
+        // ResponseをResolveする関数をモック化
+        AccessOpenSearch.resolveResponse = jest.fn().mockReturnValue(null);
+
+        const id = 'id';
+
+        const request = new HttpRequest({
+            headers: {
+                'Content-Type': 'application/json',
+                'host': domain
+            },
+            hostname: domain,
+            method: 'DELETE',
+            path: index
+        })
+
+        await AccessOpenSearch.deleteIndex();
+
+        expect(signer.sign).toHaveBeenCalledTimes(1);
+        expect(client.handle).toHaveBeenCalledTimes(1);
+        expect(AccessOpenSearch.resolveResponse).toHaveBeenCalledTimes(1);
+
+        // signerを呼び出すパラメタが期待通りであるかテスト
+        expect(signer.sign).toHaveBeenCalledWith(request);
+
+
+    })
+
 })
