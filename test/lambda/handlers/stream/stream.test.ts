@@ -59,7 +59,7 @@ describe('test dynamodb stream handler', (): void => {
             ]
         }
 
-        // DBにPutする処理をMock化
+        // opensearchのドキュメントをDeleteする処理をMock化
         const deleteDocMock = (AccessOpenSearch.delete as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent);
@@ -69,12 +69,9 @@ describe('test dynamodb stream handler', (): void => {
         // OpenSearchのDeleteApi実行が１回だけであることをテスト
         expect(deleteDocMock.mock.calls.length).toBe(1);
 
-        // deleteTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
+        // deleteDocMockへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
         // 兼オブジェクト変換テスト
         expect(deleteDocMock.mock.calls[0][0]).toEqual(expect.any(String));
-
-        // // レスポンスが期待通りであることをテスト
-        // expect(response).toEqual(expected);
 
 
     })
@@ -125,7 +122,7 @@ describe('test dynamodb stream handler', (): void => {
             ]
         }
 
-        // DBにPutする処理をMock化
+        // opensearchのドキュメントを追加・更新する処理をMock化
         const indexDocMock = (AccessOpenSearch.index as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent);
@@ -144,12 +141,9 @@ describe('test dynamodb stream handler', (): void => {
         // OpenSearchのIndexApi実行が１回だけであることをテスト
         expect(indexDocMock.mock.calls.length).toBe(1);
 
-        // deleteTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
+        // indexDocMockへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
         // 兼オブジェクト変換テスト
         expect(indexDocMock.mock.calls[0][0]).toEqual({ id, convertedDocument });
-
-        // // レスポンスが期待通りであることをテスト
-        // expect(response).toEqual(expected);
 
 
     })
@@ -160,7 +154,7 @@ describe('test dynamodb stream handler', (): void => {
 
         } as any;
 
-        // DBにPutする処理をMock化
+        // opensearchのドキュメントに追加・更新する処理をMock化
         const indexDocMock = (AccessOpenSearch.index as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent);
@@ -215,7 +209,7 @@ describe('test dynamodb stream handler', (): void => {
             ]
         }
 
-        // DBにPutする処理をMock化
+        // opensearchのドキュメントに追加・更新する処理をMock化
         const indexDocMock = (AccessOpenSearch.index as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent);
@@ -251,7 +245,7 @@ describe('test dynamodb stream handler', (): void => {
             ]
         }
 
-        // DBにPutする処理をMock化
+        // opensearchのドキュメントに追加・更新する処理をMock化
         const indexDocMock = (AccessOpenSearch.index as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent);

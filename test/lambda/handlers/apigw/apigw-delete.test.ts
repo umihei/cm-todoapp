@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
+import { APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
 import { handler } from '../../../../lambda/handler/deleteHandler';
 import { AccessTodoTable } from '../../../../lambda/infra/accessTodoTable';
 import { DeleteDBInfo } from '../../../../lambda/domain/delete';
@@ -33,7 +33,7 @@ describe('delete Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBにDeleteする処理をMock化
         const deleteTodoMock = (AccessTodoTable.deleteTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -88,7 +88,7 @@ describe('delete Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBにDeleteする処理をMock化
         const deleteTodoMock = (AccessTodoTable.deleteTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -129,7 +129,7 @@ describe('delete Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBにDeleteする処理をMock化
         const deleteTodoMock = (AccessTodoTable.deleteTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -170,7 +170,7 @@ describe('delete Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBにDeleteする処理をMock化
         const deleteTodoMock = (AccessTodoTable.deleteTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -208,7 +208,7 @@ describe('delete Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBにDeleteする処理をMock化
         const deleteTodoMock = (AccessTodoTable.deleteTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -250,7 +250,7 @@ describe('delete Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBにDeleteする処理をMock化
         const deleteTodoMock = (AccessTodoTable.deleteTodo as jest.Mock).mockRejectedValue(null);
 
         const response = await handler(inputEvent, inputContext);

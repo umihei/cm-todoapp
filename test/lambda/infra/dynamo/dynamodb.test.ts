@@ -7,7 +7,6 @@ import { QueryDBInfo } from '../../../../lambda/domain/query';
 import { UpdateDBInfo } from '../../../../lambda/domain/update';
 import { DeleteDBInfo } from '../../../../lambda/domain/delete';
 import { AccessTodoTable, ddbClient } from '../../../../lambda/infra/accessTodoTable';
-import { DynamoDBClient, PutItemCommand, PutItemCommandInput, PutItemCommandOutput } from '@aws-sdk/client-dynamodb';
 
 describe('todo table service call', (): void => {
 
@@ -65,7 +64,7 @@ describe('todo table service call', (): void => {
             })
         });
 
-        // PutItemCommandを実行する関数をモック化
+        // QueryItemCommandを実行する関数をモック化
         AccessTodoTable.executeQueryCommand = jest.fn().mockReturnValue(null);
 
         // DBへの登録処理を実行する関数へ渡すパラメタ
@@ -73,7 +72,7 @@ describe('todo table service call', (): void => {
             username: 'tarako'
         };
 
-        // PutItemCommandへ渡すパラメタの期待値
+        // QueryItemCommandへ渡すパラメタの期待値
         const queryCommandInputParams = {
             TableName: 'local-todo',
             KeyConditionExpression: "userName = :s",
@@ -88,7 +87,7 @@ describe('todo table service call', (): void => {
         // モック化した関数が１回だけコールされたことをテスト
         expect(AccessTodoTable.executeQueryCommand).toHaveBeenCalledTimes(1);
 
-        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        // QueryItemCommandを呼び出すパラメタが期待通りであるかテスト
         expect(AccessTodoTable.executeQueryCommand).toHaveBeenCalledWith(queryCommandInputParams);
 
         // モック化した関数が１回だけコールされたことをテスト
@@ -139,7 +138,7 @@ describe('todo table service call', (): void => {
         // モック化した関数が１回だけコールされたことをテスト
         expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledTimes(1);
 
-        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        // UpdateItemCommandを呼び出すパラメタが期待通りであるかテスト
         expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledWith(updateItemCommandInputParams);
 
         // モック化した関数が１回だけコールされたことをテスト
@@ -188,7 +187,7 @@ describe('todo table service call', (): void => {
         // モック化した関数が１回だけコールされたことをテスト
         expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledTimes(1);
 
-        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        // UpdateItemCommandを呼び出すパラメタが期待通りであるかテスト
         expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledWith(updateItemCommandInputParams);
 
         // モック化した関数が１回だけコールされたことをテスト
@@ -237,7 +236,7 @@ describe('todo table service call', (): void => {
         // モック化した関数が１回だけコールされたことをテスト
         expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledTimes(1);
 
-        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        // UpdateItemCommandを呼び出すパラメタが期待通りであるかテスト
         expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledWith(updateItemCommandInputParams);
 
         // モック化した関数が１回だけコールされたことをテスト
@@ -256,7 +255,7 @@ describe('todo table service call', (): void => {
             })
         });
 
-        // UpdateItemCommandを実行する関数をモック化
+        // DeleteItemCommandを実行する関数をモック化
         AccessTodoTable.executeDeleteItemCommand = jest.fn().mockReturnValue(null);
 
         // DBへの更新処理を実行する関数へ渡すパラメタ
@@ -265,7 +264,7 @@ describe('todo table service call', (): void => {
             todoid: 'test-todoid'
         };
 
-        // updateItemCommandへ渡すパラメタの期待値
+        // deleteItemCommandへ渡すパラメタの期待値
         const deleteItemCommandInputParams = {
             TableName: process.env.TODO_TABLE_NAME,
             Key: {
@@ -280,7 +279,7 @@ describe('todo table service call', (): void => {
         // モック化した関数が１回だけコールされたことをテスト
         expect(AccessTodoTable.executeDeleteItemCommand).toHaveBeenCalledTimes(1);
 
-        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        // DeleteItemCommandを呼び出すパラメタが期待通りであるかテスト
         expect(AccessTodoTable.executeDeleteItemCommand).toHaveBeenCalledWith(deleteItemCommandInputParams);
 
         // モック化した関数が１回だけコールされたことをテスト

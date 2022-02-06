@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
+import { APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
 import { handler } from '../../../../lambda/handler/updateHandler';
 import { AccessTodoTable } from '../../../../lambda/infra/accessTodoTable';
 import { UpdateDBInfo } from '../../../../lambda/domain/update';
@@ -35,7 +35,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -56,10 +56,10 @@ describe('update Input/Output', (): void => {
             }),
         };
 
-        // DynamodbへのPutが１回だけであることをテスト
+        // DynamodbへのUpdateが１回だけであることをテスト
         expect(updateTodoMock.mock.calls.length).toBe(1);
 
-        // registerNewTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
+        // updateTodoへ（１回目の呼び出しで）渡すパラメタが期待通りになっているかをテスト
         // 兼オブジェクト変換テスト
         expect(updateTodoMock.mock.calls[0][0]).toEqual(expectedUpdateDBInfo);
 
@@ -94,7 +94,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -144,7 +144,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -190,7 +190,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -240,7 +240,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -293,7 +293,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -346,7 +346,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -400,7 +400,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
 
         const response = await handler(inputEvent, inputContext);
@@ -454,7 +454,7 @@ describe('update Input/Output', (): void => {
             awsRequestId: 'test-id'
         } as any;
 
-        // DBにPutする処理をMock化
+        // DBをUpdateする処理をMock化
         const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockRejectedValue(null);
 
         const response = await handler(inputEvent, inputContext);

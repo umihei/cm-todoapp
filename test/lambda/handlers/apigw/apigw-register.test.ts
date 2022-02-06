@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandlerV2, APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
+import { APIGatewayProxyEventV2WithJWTAuthorizer, Context } from 'aws-lambda';
 import { handler } from '../../../../lambda/handler/registerHandler';
 import { AccessTodoTable } from '../../../../lambda/infra/accessTodoTable';
 import { RegisterDBInfo } from '../../../../lambda/domain/register';
