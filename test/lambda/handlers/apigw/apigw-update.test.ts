@@ -68,6 +68,58 @@ describe('update Input/Output', (): void => {
 
     })
 
+    test('update domain neither title nor description exist', async () => {
+        const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
+            body: JSON.stringify({
+            }),
+            requestContext: {
+                authorizer: {
+                    jwt: {
+                        claims: {
+                            username: 'tarako'
+                        }
+                    }
+                }
+            },
+            pathParameters: {
+                username: 'tarako',
+                todoid: 'test-todoid'
+            },
+            headers: {
+                authorization: "test-auth"
+            }
+        } as any;
+
+        const inputContext: Context = {
+            awsRequestId: 'test-id'
+        } as any;
+
+        // DBにPutする処理をMock化
+        const updateTodoMock = (AccessTodoTable.updateTodo as jest.Mock).mockResolvedValue(null);
+
+        const response = await handler(inputEvent, inputContext);
+
+        // モック化した関数へ渡すパラメタの期待値
+        const expectedUpdateDBInfo: UpdateDBInfo = {
+            username: 'tarako',
+            todoid: 'test-todoid',
+            title: 'あれこれ',
+            description: 'あれしてこれして',
+        }
+
+        // ハンドラが返す値の期待値
+        const expected = {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'OK',
+            }),
+        };
+
+        // レスポンスが期待通りであることをテスト
+        expect(response).toEqual(expected);
+
+    })
+
     test('update domain body does not exist', async () => {
         const inputEvent: APIGatewayProxyEventV2WithJWTAuthorizer = {
             requestContext: {
