@@ -147,6 +147,104 @@ describe('todo table service call', (): void => {
 
     });
 
+    test('update　describe does not exist', async () => {
+
+        // APIを実行する関数をモック化
+        ddbClient.send = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue({
+                Items: [{
+                    test: 'hoge'
+                }]
+            })
+        });
+
+        // UpdateItemCommandを実行する関数をモック化
+        AccessTodoTable.executeUpdateItemCommand = jest.fn().mockReturnValue(null);
+
+        // DBへの更新処理を実行する関数へ渡すパラメタ
+        const inputParameter: UpdateDBInfo = {
+            username: 'tarako',
+            todoid: 'test-todoid',
+            title: 'test-title'
+        };
+
+        // updateItemCommandへ渡すパラメタの期待値
+        const updateItemCommandInputParams = {
+            TableName: process.env.TODO_TABLE_NAME,
+            Key: {
+                userName: { S: inputParameter.username },
+                todoId: { S: inputParameter.todoid },
+            },
+            UpdateExpression: "set title = :t, lastUpdateDateTime = :l",
+            ExpressionAttributeValues: {
+                ":t": { S: inputParameter.title },
+                ":l": { S: expect.any(String) }
+            }
+        }
+
+        // DBへの更新処理を実行
+        await AccessTodoTable.updateTodo(inputParameter)
+
+        // モック化した関数が１回だけコールされたことをテスト
+        expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledTimes(1);
+
+        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledWith(updateItemCommandInputParams);
+
+        // モック化した関数が１回だけコールされたことをテスト
+        expect(ddbClient.send).toHaveBeenCalledTimes(1);
+
+    });
+
+    test('update　title does not exist', async () => {
+
+        // APIを実行する関数をモック化
+        ddbClient.send = jest.fn().mockReturnValue({
+            promise: jest.fn().mockResolvedValue({
+                Items: [{
+                    test: 'hoge'
+                }]
+            })
+        });
+
+        // UpdateItemCommandを実行する関数をモック化
+        AccessTodoTable.executeUpdateItemCommand = jest.fn().mockReturnValue(null);
+
+        // DBへの更新処理を実行する関数へ渡すパラメタ
+        const inputParameter: UpdateDBInfo = {
+            username: 'tarako',
+            todoid: 'test-todoid',
+            description: 'test-description'
+        };
+
+        // updateItemCommandへ渡すパラメタの期待値
+        const updateItemCommandInputParams = {
+            TableName: process.env.TODO_TABLE_NAME,
+            Key: {
+                userName: { S: inputParameter.username },
+                todoId: { S: inputParameter.todoid },
+            },
+            UpdateExpression: "set description = :d, lastUpdateDateTime = :l",
+            ExpressionAttributeValues: {
+                ":d": { S: inputParameter.description },
+                ":l": { S: expect.any(String) }
+            }
+        }
+
+        // DBへの更新処理を実行
+        await AccessTodoTable.updateTodo(inputParameter)
+
+        // モック化した関数が１回だけコールされたことをテスト
+        expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledTimes(1);
+
+        // PutItemCommandを呼び出すパラメタが期待通りであるかテスト
+        expect(AccessTodoTable.executeUpdateItemCommand).toHaveBeenCalledWith(updateItemCommandInputParams);
+
+        // モック化した関数が１回だけコールされたことをテスト
+        expect(ddbClient.send).toHaveBeenCalledTimes(1);
+
+    });
+
     test('delete', async () => {
 
         // APIを実行する関数をモック化
